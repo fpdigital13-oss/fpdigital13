@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FP Digital Printing - Sistem Pembukuan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+        
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .sidebar-item:hover { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            transform: translateX(4px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .active-tab { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            transform: translateX(4px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .card-hover:hover { 
+            transform: translateY(-8px) scale(1.02); 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+        
+        .gradient-bg { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .card-gradient {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid rgba(102, 126, 234, 0.1);
+        }
+        
+        .status-badge {
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .sidebar-gradient {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border-right: 1px solid rgba(102, 126, 234, 0.1);
+        }
+        
+        .header-glass {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .input-focus:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+        
+        .table-row:hover {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            transform: translateX(4px);
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid rgba(102, 126, 234, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .modal-backdrop {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+        }
+        
+        .icon-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .floating-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .pulse-glow {
+            animation: pulse-glow 2s infinite;
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(102, 126, 234, 0.6); }
+        }
+        
+        .text-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .border-gradient {
+            border: 2px solid transparent;
+            background: linear-gradient(white, white) padding-box,
+                        linear-gradient(135deg, #667eea, #764ba2) border-box;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Login Page -->
+    <div id="loginPage" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-700 relative overflow-hidden">
+        <!-- Background Animation -->
+        <div class="absolute inset-0">
+            <div class="absolute top-10 left-10 w-20 h-20 bg-white/10 rounded-full animate-pulse"></div>
+            <div class="absolute top-32 right-20 w-16 h-16 bg-white/5 rounded-full animate-bounce"></div>
+            <div class="absolute bottom-20 left-32 w-24 h-24 bg-white/10 rounded-full animate-pulse" style="animation-delay: 1s;"></div>
+            <div class="absolute bottom-32 right-16 w-12 h-12 bg-white/5 rounded-full animate-bounce" style="animation-delay: 2s;"></div>
+        </div>
+        
+        <div class="relative z-10 w-full max-w-md mx-4">
+            <!-- Login Card -->
+            <div class="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/20">
+                <!-- Logo and Title -->
+                <div class="text-center mb-8">
+                    <div class="mx-auto w-20 h-20 bg-gradient-to-br from-purple-600 to-blue-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+                        <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"/>
+                        </svg>
+                    </div>
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2">FP Digital Printing</h1>
+                    <p class="text-gray-600">Sistem Pembukuan Digital</p>
+                </div>
+
+                <!-- Login Form -->
+                <form id="loginForm" class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Username</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/>
+                                </svg>
+                            </div>
+                            <input type="text" id="loginUsername" class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-0 transition-colors bg-white/80" placeholder="Masukkan username" required>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"/>
+                                </svg>
+                            </div>
+                            <input type="password" id="loginPassword" class="w-full pl-10 pr-12 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-0 transition-colors bg-white/80" placeholder="Masukkan password" required>
+                            <button type="button" onclick="togglePassword()" class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                <svg id="eyeIcon" class="w-5 h-5 text-gray-400 hover:text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                                    <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center">
+                            <input type="checkbox" id="rememberMe" class="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500">
+                            <span class="ml-2 text-sm text-gray-600">Ingat saya</span>
+                        </label>
+                        <button type="button" class="text-sm text-purple-600 hover:text-purple-800 font-medium">
+                            Lupa password?
+                        </button>
+                    </div>
+
+                    <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 px-4 rounded-xl font-semibold hover:from-purple-700 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                        🔐 Masuk ke Dashboard
+                    </button>
+                </form>
+
+                <!-- Demo Credentials Info -->
+                <div class="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
+                    <h4 class="text-sm font-semibold text-blue-800 mb-2">🔑 Demo Login:</h4>
+                    <div class="text-sm text-blue-700">
+                        <p><strong>Username:</strong> admin</p>
+                        <p><strong>Password:</strong> admin123</p>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="mt-6 text-center text-sm text-gray-500">
+                    <p>&copy; 2024 FP Digital Printing. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application (Initially Hidden) -->
+    <div id="mainApp" class="hidden">
+        <!-- Header -->
+    <header class="header-glass text-white shadow-2xl relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-blue-600/20"></div>
+        <div class="container mx-auto px-4 lg:px-6 py-4 lg:py-6 relative z-10">
+            <div class="flex items-center justify-between">
+                <!-- Mobile Menu Button -->
+                <button id="mobileMenuBtn" class="lg:hidden bg-white/20 backdrop-filter backdrop-blur-lg p-3 rounded-xl border border-white/30 mr-3" onclick="toggleMobileMenu()">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+                
+                <div class="flex items-center space-x-3 lg:space-x-4">
+                    <div class="bg-white/20 backdrop-filter backdrop-blur-lg p-2 lg:p-3 rounded-xl border border-white/30 floating-animation">
+                        <svg class="w-6 h-6 lg:w-10 lg:h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-xl lg:text-3xl font-bold tracking-tight">FP Digital Printing</h1>
+                        <p class="text-white/80 text-xs lg:text-sm font-medium hidden sm:block">Sistem Pembukuan Digital Terpadu</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2 lg:space-x-4">
+                    <div class="text-right bg-white/10 backdrop-filter backdrop-blur-lg rounded-xl px-2 lg:px-4 py-2 lg:py-3 border border-white/20 hidden md:block">
+                        <p class="text-xs lg:text-sm text-white/70 font-medium">Hari ini</p>
+                        <p class="font-bold text-sm lg:text-lg" id="currentDate"></p>
+                    </div>
+                    <div class="text-right bg-white/10 backdrop-filter backdrop-blur-lg rounded-xl px-2 lg:px-4 py-2 lg:py-3 border border-white/20">
+                        <p class="text-xs lg:text-sm text-white/70 font-medium">Selamat datang</p>
+                        <p class="font-bold text-sm lg:text-lg" id="currentUserName">Administrator</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex relative">
+        <!-- Mobile Menu Overlay -->
+        <div id="mobileMenuOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden" onclick="closeMobileMenu()"></div>
+        
+        <!-- Sidebar -->
+        <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-50 w-64 sidebar-gradient shadow-2xl min-h-screen transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
+            <div class="absolute inset-0 bg-gradient-to-b from-white/50 to-transparent"></div>
+            <nav class="p-4 lg:p-6 relative z-10">
+                <ul class="space-y-3">
+                    <li>
+                        <button onclick="showTab('dashboard')" class="sidebar-item w-full text-left px-5 py-4 rounded-xl transition-all duration-300 flex items-center space-x-4 active-tab shadow-lg" id="tab-dashboard">
+                            <div class="p-2 rounded-lg bg-white/20">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                                </svg>
+                            </div>
+                            <span class="text-white font-semibold">Dashboard</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="showTab('pesanan-harian')" class="sidebar-item w-full text-left px-5 py-4 rounded-xl transition-all duration-300 flex items-center space-x-4 text-gray-700 hover:text-white" id="tab-pesanan-harian">
+                            <div class="p-2 rounded-lg bg-gray-100">
+                                <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+                                    <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3z"/>
+                                </svg>
+                            </div>
+                            <span class="font-medium">Pesanan Harian</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="showTab('pesanan-tagihan')" class="sidebar-item w-full text-left px-5 py-4 rounded-xl transition-all duration-300 flex items-center space-x-4 text-gray-700 hover:text-white" id="tab-pesanan-tagihan">
+                            <div class="p-2 rounded-lg bg-gray-100">
+                                <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"/>
+                                </svg>
+                            </div>
+                            <span class="font-medium">Pesanan Tagihan</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="showTab('pelanggan')" class="sidebar-item w-full text-left px-5 py-4 rounded-xl transition-all duration-300 flex items-center space-x-4 text-gray-700 hover:text-white" id="tab-pelanggan">
+                            <div class="p-2 rounded-lg bg-gray-100">
+                                <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+                                </svg>
+                            </div>
+                            <span class="font-medium">Data Pelanggan</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="showTab('keuangan')" class="sidebar-item w-full text-left px-5 py-4 rounded-xl transition-all duration-300 flex items-center space-x-4 text-gray-700 hover:text-white" id="tab-keuangan">
+                            <div class="p-2 rounded-lg bg-gray-100">
+                                <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"/>
+                                </svg>
+                            </div>
+                            <span class="font-medium">Laporan Keuangan</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="showTab('surat-jalan')" class="sidebar-item w-full text-left px-5 py-4 rounded-xl transition-all duration-300 flex items-center space-x-4 text-gray-700 hover:text-white" id="tab-surat-jalan">
+                            <div class="p-2 rounded-lg bg-gray-100">
+                                <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+                                    <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm2.707 4.707a1 1 0 00-1.414 1.414L8.586 14.5a1 1 0 001.414 0l4.293-4.293a1 1 0 00-1.414-1.414L9 12.586l-2.293-2.293z"/>
+                                </svg>
+                            </div>
+                            <span class="font-medium">Surat Jalan</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="showTab('stok')" class="sidebar-item w-full text-left px-5 py-4 rounded-xl transition-all duration-300 flex items-center space-x-4 text-gray-700 hover:text-white" id="tab-stok">
+                            <div class="p-2 rounded-lg bg-gray-100">
+                                <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 2L3 7v11a1 1 0 001 1h12a1 1 0 001-1V7l-7-5zM6 9a1 1 0 112 0 1 1 0 01-2 0zm6 0a1 1 0 112 0 1 1 0 01-2 0z"/>
+                                </svg>
+                            </div>
+                            <span class="font-medium">Stok Barang</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="showTab('pengaturan')" class="sidebar-item w-full text-left px-5 py-4 rounded-xl transition-all duration-300 flex items-center space-x-4 text-gray-700 hover:text-white" id="tab-pengaturan">
+                            <div class="p-2 rounded-lg bg-gray-100">
+                                <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"/>
+                                </svg>
+                            </div>
+                            <span class="font-medium">Pengaturan</span>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-4 lg:p-8 relative w-full lg:w-auto">
+            <div class="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent pointer-events-none"></div>
+            <div class="relative z-10">
+            <!-- Dashboard Tab -->
+            <div id="content-dashboard" class="tab-content">
+                <div class="mb-8">
+                    <h2 class="text-4xl font-bold text-gradient mb-3">Dashboard</h2>
+                    <p class="text-gray-600 text-lg">Ringkasan aktivitas FP Digital Printing hari ini</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8 mb-6 lg:mb-10">
+                    <div class="stat-card p-4 lg:p-8 rounded-2xl shadow-xl card-hover transition-all duration-300 floating-animation">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-xs lg:text-sm font-medium mb-1 lg:mb-2">Total Pesanan Hari Ini</p>
+                                <p class="text-2xl lg:text-3xl font-bold text-gray-800" id="totalPesananHariIni">12</p>
+                                <p class="text-xs text-green-600 font-medium mt-1">↗ +8% dari kemarin</p>
+                            </div>
+                            <div class="bg-gradient-to-br from-blue-500 to-blue-600 p-3 lg:p-4 rounded-2xl shadow-lg pulse-glow">
+                                <svg class="w-6 h-6 lg:w-8 lg:h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+                                    <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V5z"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card p-4 lg:p-8 rounded-2xl shadow-xl card-hover transition-all duration-300 floating-animation" style="animation-delay: 0.2s;">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-xs lg:text-sm font-medium mb-1 lg:mb-2">Pendapatan Hari Ini</p>
+                                <p class="text-2xl lg:text-3xl font-bold text-gray-800" id="pendapatanHariIni">Rp 2.450.000</p>
+                                <p class="text-xs text-green-600 font-medium mt-1">↗ +15% dari kemarin</p>
+                            </div>
+                            <div class="bg-gradient-to-br from-green-500 to-green-600 p-3 lg:p-4 rounded-2xl shadow-lg pulse-glow">
+                                <svg class="w-6 h-6 lg:w-8 lg:h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card p-4 lg:p-8 rounded-2xl shadow-xl card-hover transition-all duration-300 floating-animation" style="animation-delay: 0.4s;">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-xs lg:text-sm font-medium mb-1 lg:mb-2">Pesanan Pending</p>
+                                <p class="text-2xl lg:text-3xl font-bold text-gray-800" id="pesananPending">5</p>
+                                <p class="text-xs text-yellow-600 font-medium mt-1">⚠ Perlu perhatian</p>
+                            </div>
+                            <div class="bg-gradient-to-br from-yellow-500 to-yellow-600 p-3 lg:p-4 rounded-2xl shadow-lg pulse-glow">
+                                <svg class="w-6 h-6 lg:w-8 lg:h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card p-4 lg:p-8 rounded-2xl shadow-xl card-hover transition-all duration-300 floating-animation" style="animation-delay: 0.6s;">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-xs lg:text-sm font-medium mb-1 lg:mb-2">Total Pelanggan</p>
+                                <p class="text-2xl lg:text-3xl font-bold text-gray-800" id="totalPelanggan">156</p>
+                                <p class="text-xs text-blue-600 font-medium mt-1">↗ +3 pelanggan baru</p>
+                            </div>
+                            <div class="bg-gradient-to-br from-purple-500 to-purple-600 p-3 lg:p-4 rounded-2xl shadow-lg pulse-glow">
+                                <svg class="w-6 h-6 lg:w-8 lg:h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Orders -->
+                <div class="card-gradient rounded-2xl shadow-2xl p-4 lg:p-8 border-gradient">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 lg:mb-6 gap-3">
+                        <h3 class="text-xl lg:text-2xl font-bold text-gradient">Pesanan Terbaru</h3>
+                        <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-3 lg:px-4 py-2 rounded-full text-xs lg:text-sm font-medium text-center">
+                            Live Updates
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b-2 border-gradient-to-r from-blue-200 to-purple-200">
+                                    <th class="text-left py-3 lg:py-4 px-3 lg:px-6 font-bold text-gray-700 text-sm lg:text-base">No. Pesanan</th>
+                                    <th class="text-left py-3 lg:py-4 px-3 lg:px-6 font-bold text-gray-700 text-sm lg:text-base">Pelanggan</th>
+                                    <th class="text-left py-3 lg:py-4 px-3 lg:px-6 font-bold text-gray-700 text-sm lg:text-base hidden sm:table-cell">Jenis Cetak</th>
+                                    <th class="text-left py-3 lg:py-4 px-3 lg:px-6 font-bold text-gray-700 text-sm lg:text-base">Total</th>
+                                    <th class="text-left py-3 lg:py-4 px-3 lg:px-6 font-bold text-gray-700 text-sm lg:text-base">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentOrdersTable">
+                                <!-- Recent orders will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pesanan Harian Tab -->
+            <div id="content-pesanan-harian" class="tab-content hidden">
+                <div class="mb-4 lg:mb-6 flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
+                    <div>
+                        <h2 class="text-2xl lg:text-3xl font-bold text-gray-800 mb-2">Pesanan Harian</h2>
+                        <p class="text-gray-600 text-sm lg:text-base">Kelola pesanan dengan pembayaran langsung</p>
+                    </div>
+                    <button onclick="showAddOrderModal('harian')" class="btn-primary text-white px-4 lg:px-8 py-3 lg:py-4 rounded-2xl font-bold hover:opacity-90 transition-all duration-300 shadow-xl text-sm lg:text-base">
+                        ✨ Tambah Pesanan Harian
+                    </button>
+                </div>
+
+                <div class="card-gradient rounded-2xl shadow-2xl p-4 lg:p-8 border-gradient">
+                    <div class="mb-4 flex flex-col lg:flex-row gap-3 lg:gap-4">
+                        <input type="text" placeholder="🔍 Cari pesanan harian..." class="input-focus border-2 border-gray-200 rounded-xl px-4 lg:px-6 py-2 lg:py-3 flex-1 min-w-0 transition-all duration-300 bg-white/80 backdrop-blur-sm text-sm lg:text-base">
+                        <select class="input-focus border-2 border-gray-200 rounded-xl px-4 lg:px-6 py-2 lg:py-3 transition-all duration-300 bg-white/80 backdrop-blur-sm text-sm lg:text-base">
+                            <option>Semua Status Bayar</option>
+                            <option>Belum Bayar</option>
+                            <option>DP</option>
+                            <option>Sebagian</option>
+                            <option>Lunas</option>
+                        </select>
+                        <input type="date" class="input-focus border-2 border-gray-200 rounded-xl px-4 lg:px-6 py-2 lg:py-3 transition-all duration-300 bg-white/80 backdrop-blur-sm text-sm lg:text-base" id="filterDateHarian">
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-gray-200">
+                                    <th class="text-left py-2 lg:py-3 px-2 lg:px-4 font-semibold text-gray-700 text-xs lg:text-sm">No. Pesanan</th>
+                                    <th class="text-left py-2 lg:py-3 px-2 lg:px-4 font-semibold text-gray-700 text-xs lg:text-sm hidden sm:table-cell">Tanggal</th>
+                                    <th class="text-left py-2 lg:py-3 px-2 lg:px-4 font-semibold text-gray-700 text-xs lg:text-sm">Pelanggan</th>
+                                    <th class="text-left py-2 lg:py-3 px-2 lg:px-4 font-semibold text-gray-700 text-xs lg:text-sm hidden md:table-cell">Jenis Cetak</th>
+                                    <th class="text-left py-2 lg:py-3 px-2 lg:px-4 font-semibold text-gray-700 text-xs lg:text-sm hidden lg:table-cell">Ukuran</th>
+                                    <th class="text-left py-2 lg:py-3 px-2 lg:px-4 font-semibold text-gray-700 text-xs lg:text-sm hidden lg:table-cell">Qty</th>
+                                    <th class="text-left py-2 lg:py-3 px-2 lg:px-4 font-semibold text-gray-700 text-xs lg:text-sm">Total</th>
+                                    <th class="text-left py-2 lg:py-3 px-2 lg:px-4 font-semibold text-gray-700 text-xs lg:text-sm">Status Bayar</th>
+                                    <th class="text-left py-2 lg:py-3 px-2 lg:px-4 font-semibold text-gray-700 text-xs lg:text-sm hidden sm:table-cell">Status</th>
+                                    <th class="text-left py-2 lg:py-3 px-2 lg:px-4 font-semibold text-gray-700 text-xs lg:text-sm">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersHarianTable">
+                                <!-- Daily orders will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pesanan Tagihan Tab -->
+            <div id="content-pesanan-tagihan" class="tab-content hidden">
+                <div class="mb-6 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Pesanan Tagihan</h2>
+                        <p class="text-gray-600">Kelola pesanan dengan sistem tagihan bulanan</p>
+                    </div>
+                    <button onclick="showAddOrderModal('tagihan')" class="gradient-bg text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                        + Tambah Pesanan Tagihan
+                    </button>
+                </div>
+
+                <!-- Summary Cards for Tagihan -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div class="bg-white p-6 rounded-xl shadow-md">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Total Tagihan Bulan Ini</h3>
+                        <p class="text-3xl font-bold text-blue-600" id="totalTagihanBulanIni">Rp 15.750.000</p>
+                        <p class="text-sm text-gray-500 mt-1">25 pesanan tagihan</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-md">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Tagihan Belum Dibayar</h3>
+                        <p class="text-3xl font-bold text-red-600" id="tagihanBelumBayar">Rp 8.250.000</p>
+                        <p class="text-sm text-gray-500 mt-1">12 tagihan pending</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-md">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Tagihan Terbayar</h3>
+                        <p class="text-3xl font-bold text-green-600" id="tagihanTerbayar">Rp 7.500.000</p>
+                        <p class="text-sm text-gray-500 mt-1">13 tagihan lunas</p>
+                    </div>
+                </div>
+
+                <div class="card-gradient rounded-2xl shadow-2xl p-8 border-gradient">
+                    <div class="mb-4 flex flex-wrap gap-4">
+                        <input type="text" placeholder="Cari pesanan tagihan..." class="border border-gray-300 rounded-lg px-4 py-2 flex-1 min-w-64">
+                        <select class="border border-gray-300 rounded-lg px-4 py-2">
+                            <option>Semua Status Bayar</option>
+                            <option>Belum Bayar</option>
+                            <option>DP</option>
+                            <option>Sebagian</option>
+                            <option>Lunas</option>
+                        </select>
+                        <select class="border border-gray-300 rounded-lg px-4 py-2">
+                            <option>Bulan Ini</option>
+                            <option>Januari 2024</option>
+                            <option>Februari 2024</option>
+                            <option>Maret 2024</option>
+                        </select>
+                        <button onclick="generateInvoice()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+                            📄 Buat Invoice
+                        </button>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-gray-200">
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">No. Pesanan</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Tanggal</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Pelanggan</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Jenis Cetak</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Total</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Terbayar</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Sisa</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Jatuh Tempo</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Status Bayar</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersTagihanTable">
+                                <!-- Invoice orders will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Pelanggan Tab -->
+            <div id="content-pelanggan" class="tab-content hidden">
+                <div class="mb-6 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Data Pelanggan</h2>
+                        <p class="text-gray-600">Kelola informasi pelanggan</p>
+                    </div>
+                    <button onclick="showAddCustomerModal()" class="gradient-bg text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                        + Tambah Pelanggan
+                    </button>
+                </div>
+
+                <div class="card-gradient rounded-2xl shadow-2xl p-8 border-gradient">
+                    <div class="mb-4">
+                        <input type="text" placeholder="Cari pelanggan..." class="border border-gray-300 rounded-lg px-4 py-2 w-full max-w-md">
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-gray-200">
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">ID</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Nama</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Telepon</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Email</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Alamat</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Total Pesanan</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="customersTable">
+                                <!-- Customers will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Laporan Keuangan Tab -->
+            <div id="content-keuangan" class="tab-content hidden">
+                <div class="mb-6">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Laporan Keuangan</h2>
+                    <p class="text-gray-600">Analisis pendapatan dan pengeluaran</p>
+                </div>
+
+                <!-- Financial Summary Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow-md">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Pendapatan Bulan Ini</h3>
+                        <p class="text-3xl font-bold text-green-600" id="pendapatanBulanIni">Rp 45.750.000</p>
+                        <p class="text-sm text-gray-500 mt-1">+12% dari bulan lalu</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-md">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Pengeluaran Bulan Ini</h3>
+                        <p class="text-3xl font-bold text-red-600" id="pengeluaranBulanIni">Rp 18.250.000</p>
+                        <p class="text-sm text-gray-500 mt-1">+5% dari bulan lalu</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-md">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Keuntungan Bersih</h3>
+                        <p class="text-3xl font-bold text-blue-600" id="keuntunganBersih">Rp 27.500.000</p>
+                        <p class="text-sm text-gray-500 mt-1">+18% dari bulan lalu</p>
+                    </div>
+                </div>
+
+                <!-- Financial Records -->
+                <div class="card-gradient rounded-2xl shadow-2xl p-8 border-gradient">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-semibold text-gray-800">Catatan Keuangan</h3>
+                        <button onclick="showAddTransactionModal()" class="gradient-bg text-white px-4 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                            + Tambah Transaksi
+                        </button>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-gray-200">
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Tanggal</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Keterangan</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Kategori</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Pemasukan</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Pengeluaran</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactionsTable">
+                                <!-- Transactions will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Surat Jalan Tab -->
+            <div id="content-surat-jalan" class="tab-content hidden">
+                <div class="mb-6 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Surat Jalan</h2>
+                        <p class="text-gray-600">Kelola surat jalan pengiriman pesanan</p>
+                    </div>
+                    <button onclick="showAddDeliveryModal()" class="gradient-bg text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                        + Buat Surat Jalan
+                    </button>
+                </div>
+
+                <div class="card-gradient rounded-2xl shadow-2xl p-8 border-gradient">
+                    <div class="mb-4 flex flex-wrap gap-4">
+                        <input type="text" placeholder="🔍 Cari surat jalan..." class="border border-gray-300 rounded-lg px-4 py-2 flex-1 min-w-64" id="searchDelivery" onkeyup="filterDeliveryTable()">
+                        <select class="border border-gray-300 rounded-lg px-4 py-2" id="filterOrderType" onchange="filterDeliveryTable()">
+                            <option value="">Semua Tipe Pesanan</option>
+                            <option value="FPH">Pesanan Harian</option>
+                            <option value="FPT">Pesanan Tagihan</option>
+                        </select>
+                        <input type="date" class="border border-gray-300 rounded-lg px-4 py-2" id="filterDeliveryDate" onchange="filterDeliveryTable()">
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-gray-200">
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">No. Surat Jalan</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Tanggal</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">No. Pesanan</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Pelanggan</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Alamat Tujuan</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Kurir</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="deliveryTable">
+                                <!-- Delivery notes will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stok Barang Tab -->
+            <div id="content-stok" class="tab-content hidden">
+                <div class="mb-6 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Stok Barang</h2>
+                        <p class="text-gray-600">Kelola inventori bahan dan peralatan</p>
+                    </div>
+                    <button onclick="showAddItemModal()" class="gradient-bg text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                        + Tambah Barang
+                    </button>
+                </div>
+
+                <div class="card-gradient rounded-2xl shadow-2xl p-8 border-gradient">
+                    <div class="mb-4">
+                        <input type="text" placeholder="Cari barang..." class="border border-gray-300 rounded-lg px-4 py-2 w-full max-w-md">
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-gray-200">
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Kode Barang</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Nama Barang</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Kategori</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Stok</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Satuan</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Harga</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-700">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventoryTable">
+                                <!-- Inventory items will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pengaturan Tab -->
+            <div id="content-pengaturan" class="tab-content hidden">
+                <div class="mb-6">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Pengaturan Perusahaan</h2>
+                    <p class="text-gray-600">Kelola informasi dan tampilan perusahaan</p>
+                </div>
+
+                <!-- Account Management Section -->
+                <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Manajemen Akun</h3>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="font-semibold text-gray-800">Pengguna Aktif</p>
+                                <p class="text-sm text-gray-600" id="activeUserInfo">Administrator</p>
+                                <p class="text-xs text-gray-500 mt-1">Login terakhir: <span id="lastLoginTime"></span></p>
+                            </div>
+                            <button onclick="logout()" class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z"/>
+                                </svg>
+                                <span>Logout</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    </div> <!-- End of mainApp -->
+
+    <!-- Modals -->
+    <!-- Add Order Modal -->
+    <div id="addOrderModal" class="fixed inset-0 modal-backdrop hidden items-center justify-center z-50 p-4">
+        <div class="modal-content rounded-2xl p-4 lg:p-8 w-full max-w-md mx-auto max-h-screen overflow-y-auto border-gradient">
+            <h3 class="text-lg lg:text-xl font-semibold mb-4">Tambah Pesanan Baru</h3>
+            <form id="addOrderForm">
+                <div class="space-y-3 lg:space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Pelanggan</label>
+                        <input type="text" id="orderCustomer" class="w-full input-focus border-2 border-gray-200 rounded-xl px-3 lg:px-4 py-2 lg:py-3 transition-all duration-300 text-sm lg:text-base" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Jenis Cetak</label>
+                        <select id="orderType" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm lg:text-base" required>
+                            <option value="">Pilih jenis cetak</option>
+                            <option value="Stiker">Stiker</option>
+                            <option value="Banner">Banner</option>
+                            <option value="Spanduk">Spanduk</option>
+                            <option value="Albatros">Albatros</option>
+                            <option value="Oneway">Oneway</option>
+                            <option value="Kartu Nama">Kartu Nama</option>
+                            <option value="Brosur">Brosur</option>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Ukuran</label>
+                            <input type="text" id="orderSize" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm lg:text-base" placeholder="Contoh: 3x2" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+                            <input type="number" id="orderQty" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm lg:text-base" value="1" min="1" required>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Harga Satuan</label>
+                            <input type="number" id="orderUnitPrice" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm lg:text-base" min="0">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Total Harga</label>
+                            <input type="number" id="orderTotal" class="w-full border border-gray-300 rounded-lg px-3 py-2 bg-gray-50 text-sm lg:text-base" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col sm:flex-row justify-end gap-3 sm:space-x-3 mt-6">
+                    <button type="button" onclick="closeModal('addOrderModal')" class="px-4 lg:px-6 py-2 lg:py-3 text-gray-600 border-2 border-gray-300 rounded-xl hover:bg-gray-50 transition-all duration-300 font-medium text-sm lg:text-base">Batal</button>
+                    <button type="submit" class="btn-primary text-white px-4 lg:px-6 py-2 lg:py-3 rounded-xl font-bold text-sm lg:text-base">💾 Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Customer Modal -->
+    <div id="addCustomerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl p-4 lg:p-6 w-full max-w-md mx-auto max-h-screen overflow-y-auto">
+            <h3 class="text-xl font-semibold mb-4">Tambah Pelanggan Baru</h3>
+            <form id="addCustomerForm">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Nama</label>
+                        <input type="text" id="customerName" class="w-full border border-gray-300 rounded-lg px-3 py-2" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Telepon</label>
+                        <input type="tel" id="customerPhone" class="w-full border border-gray-300 rounded-lg px-3 py-2" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input type="email" id="customerEmail" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
+                        <textarea id="customerAddress" class="w-full border border-gray-300 rounded-lg px-3 py-2" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button" onclick="closeModal('addCustomerModal')" class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50">Batal</button>
+                    <button type="submit" class="gradient-bg text-white px-4 py-2 rounded-lg hover:opacity-90">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Delivery Note Modal -->
+    <div id="addDeliveryModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl p-4 lg:p-6 w-full max-w-md mx-auto max-h-screen overflow-y-auto">
+            <h3 class="text-xl font-semibold mb-4">Buat Surat Jalan Baru</h3>
+            <form id="addDeliveryForm">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">No. Pesanan</label>
+                        <select id="deliveryOrderId" class="w-full border border-gray-300 rounded-lg px-3 py-2" required>
+                            <option value="">Pilih pesanan</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Alamat Tujuan</label>
+                        <textarea id="deliveryAddress" class="w-full border border-gray-300 rounded-lg px-3 py-2" rows="3" required></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Kurir</label>
+                        <input type="text" id="deliveryCourier" class="w-full border border-gray-300 rounded-lg px-3 py-2" required>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button" onclick="closeModal('addDeliveryModal')" class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50">Batal</button>
+                    <button type="submit" class="gradient-bg text-white px-4 py-2 rounded-lg hover:opacity-90">Buat Surat Jalan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Authentication system
+        let isLoggedIn = false;
+        let currentUser = null;
+        
+        // Default admin credentials
+        const defaultCredentials = {
+            username: 'admin',
+            password: 'admin123',
+            name: 'Administrator'
+        };
+
+        // Sample data
+        let ordersHarian = [
+            {id: 'FPH001', date: '2024-01-15', customer: 'Budi Santoso', type: 'Banner', size: '3x2m', area: 6, qty: 1, unitPrice: 35000, total: 210000, paid: 210000, paymentStatus: 'Lunas', status: 'Selesai', paymentMethod: 'Tunai'},
+            {id: 'FPH002', date: '2024-01-15', customer: 'Sari Dewi', type: 'Stiker', size: '5x1m', area: 5, qty: 1, unitPrice: 25000, total: 125000, paid: 0, paymentStatus: 'Belum Bayar', status: 'Proses', paymentMethod: ''},
+            {id: 'FPH003', date: '2024-01-14', customer: 'Ahmad Rizki', type: 'Kartu Nama', size: '1 Box', area: 1, qty: 1, unitPrice: 150000, total: 150000, paid: 150000, paymentStatus: 'Lunas', status: 'Selesai', paymentMethod: 'Transfer Bank'},
+            {id: 'FPH004', date: '2024-01-13', customer: 'Toko Makmur', type: 'Oneway', size: '3x1m', area: 3, qty: 1, unitPrice: 55000, total: 165000, paid: 82500, paymentStatus: 'DP', status: 'Proses', paymentMethod: 'Tunai'},
+            {id: 'FPH005', date: '2024-01-12', customer: 'CV. Berkah', type: 'Spanduk', size: '4x2m', area: 8, qty: 1, unitPrice: 30000, total: 240000, paid: 120000, paymentStatus: 'Sebagian', status: 'Proses', paymentMethod: 'Transfer Bank'}
+        ];
+
+        let ordersTagihan = [
+            {id: 'FPT001', date: '2024-01-15', customer: 'PT. Maju Jaya', type: 'Brosur', size: 'A4', area: 500, qty: 500, unitPrice: 800, total: 400000, paid: 0, remaining: 400000, dueDate: '2024-02-15', paymentStatus: 'Belum Bayar', status: 'Selesai'},
+            {id: 'FPT002', date: '2024-01-14', customer: 'Toko Berkah', type: 'Spanduk', size: '4x1m', area: 4, qty: 2, unitPrice: 26000, total: 208000, paid: 208000, remaining: 0, dueDate: '2024-02-14', paymentStatus: 'Lunas', status: 'Selesai'},
+            {id: 'FPT003', date: '2024-01-13', customer: 'CV. Sukses', type: 'Albatros', size: '2x1m', area: 2, qty: 1, unitPrice: 40000, total: 80000, paid: 40000, remaining: 40000, dueDate: '2024-02-13', paymentStatus: 'DP', status: 'Selesai'},
+            {id: 'FPT004', date: '2024-01-12', customer: 'PT. Global', type: 'Banner', size: '5x2m', area: 10, qty: 3, unitPrice: 31000, total: 930000, paid: 465000, remaining: 465000, dueDate: '2024-02-12', paymentStatus: 'Sebagian', status: 'Selesai'},
+            {id: 'FPT005', date: '2024-01-11', customer: 'Warung Sari', type: 'Stiker', size: '2x1m', area: 2, qty: 5, unitPrice: 22000, total: 220000, paid: 220000, remaining: 0, dueDate: '2024-02-11', paymentStatus: 'Lunas', status: 'Selesai'}
+        ];
+
+        let orders = [...ordersHarian, ...ordersTagihan];
+
+        let customers = [
+            {id: 'C001', name: 'Budi Santoso', phone: '081234567890', email: 'budi@email.com', address: 'Jl. Merdeka No. 123, Jakarta Pusat', orders: 3},
+            {id: 'C002', name: 'Sari Dewi', phone: '081234567891', email: 'sari@email.com', address: 'Jl. Thamrin No. 90, Jakarta Pusat', orders: 1},
+            {id: 'C003', name: 'PT. Maju Jaya', phone: '081234567892', email: 'info@majujaya.com', address: 'Jl. Sudirman No. 200, Jakarta Selatan', orders: 5},
+            {id: 'C004', name: 'Toko Berkah', phone: '081234567893', email: 'berkah@email.com', address: 'Jl. Sudirman No. 45, Jakarta Selatan', orders: 2},
+            {id: 'C005', name: 'Ahmad Rizki', phone: '081234567894', email: 'ahmad@email.com', address: 'Jl. Gatot Subroto No. 78, Jakarta Barat', orders: 1}
+        ];
+
+        let transactions = [
+            {date: '2024-01-15', description: 'Pembayaran Banner - Budi Santoso', category: 'Pemasukan', income: 350000, expense: 0},
+            {date: '2024-01-15', description: 'Pembelian Tinta Printer', category: 'Pengeluaran', income: 0, expense: 450000},
+            {date: '2024-01-14', description: 'Pembayaran Spanduk - Toko Berkah', category: 'Pemasukan', income: 280000, expense: 0},
+            {date: '2024-01-14', description: 'Listrik Bulan Januari', category: 'Pengeluaran', income: 0, expense: 750000},
+            {date: '2024-01-13', description: 'Pembayaran Kartu Nama - Ahmad Rizki', category: 'Pemasukan', income: 150000, expense: 0}
+        ];
+
+        let inventory = [
+            {code: 'BR001', name: 'Kertas A4 80gsm', category: 'Kertas', stock: 50, unit: 'Rim', price: 45000, status: 'Tersedia'},
+            {code: 'BR002', name: 'Tinta Printer Hitam', category: 'Tinta', stock: 5, unit: 'Botol', price: 85000, status: 'Stok Rendah'},
+            {code: 'BR003', name: 'Vinyl Banner', category: 'Material', stock: 25, unit: 'Meter', price: 15000, status: 'Tersedia'},
+            {code: 'BR004', name: 'Stiker Vinyl', category: 'Material', stock: 100, unit: 'Lembar', price: 2500, status: 'Tersedia'},
+            {code: 'BR005', name: 'Tinta Printer Warna', category: 'Tinta', stock: 2, unit: 'Set', price: 250000, status: 'Stok Habis'}
+        ];
+
+        let deliveryNotes = [
+            {id: 'SJ001', date: '2024-01-15', orderId: 'FPH001', customer: 'Budi Santoso', address: 'Jl. Merdeka No. 123, Jakarta Pusat', courier: 'Ahmad', status: 'Terkirim'},
+            {id: 'SJ002', date: '2024-01-15', orderId: 'FPT002', customer: 'Toko Berkah', address: 'Jl. Sudirman No. 45, Jakarta Selatan', courier: 'Budi', status: 'Dalam Perjalanan'},
+            {id: 'SJ003', date: '2024-01-14', orderId: 'FPH003', customer: 'Ahmad Rizki', address: 'Jl. Gatot Subroto No. 78, Jakarta Barat', courier: 'Sari', status: 'Terkirim'},
+            {id: 'SJ004', date: '2024-01-14', orderId: 'FPH002', customer: 'Sari Dewi', address: 'Jl. Thamrin No. 90, Jakarta Pusat', courier: 'Ahmad', status: 'Siap Kirim'}
+        ];
+
+        // Authentication functions
+        function togglePassword() {
+            const passwordInput = document.getElementById('loginPassword');
+            const eyeIcon = document.getElementById('eyeIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.innerHTML = `
+                    <path d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L8.464 8.464M9.878 9.878a3 3 0 00-.007 4.243m5.878-5.878L17.25 6.75M14.121 14.121L17.25 17.25"/>
+                `;
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.innerHTML = `
+                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                    <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"/>
+                `;
+            }
+        }
+
+        function login(username, password) {
+            if (username === defaultCredentials.username && password === defaultCredentials.password) {
+                isLoggedIn = true;
+                currentUser = {
+                    username: username,
+                    name: defaultCredentials.name,
+                    loginTime: new Date()
+                };
+                
+                // Hide login page and show main app
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+                
+                // Update user info in header
+                document.getElementById('currentUserName').textContent = currentUser.name;
+                document.getElementById('lastLoginTime').textContent = formatDateTime(currentUser.loginTime);
+                
+                // Initialize dashboard
+                initializeDashboard();
+                
+                return true;
+            }
+            return false;
+        }
+
+        function logout() {
+            isLoggedIn = false;
+            currentUser = null;
+            
+            // Show login page and hide main app
+            document.getElementById('loginPage').classList.remove('hidden');
+            document.getElementById('mainApp').classList.add('hidden');
+            
+            // Clear login form
+            document.getElementById('loginForm').reset();
+        }
+
+        // Utility functions
+        function formatDateTime(date) {
+            return date.toLocaleString('id-ID', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(amount);
+        }
+
+        function updateCurrentDate() {
+            const now = new Date();
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('id-ID', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        // Tab navigation
+        function showTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => content.classList.add('hidden'));
+            
+            // Remove active class from all sidebar items
+            const sidebarItems = document.querySelectorAll('.sidebar-item');
+            sidebarItems.forEach(item => {
+                item.classList.remove('active-tab');
+                item.classList.add('text-gray-700', 'hover:text-white');
+                item.classList.remove('text-white');
+                const icon = item.querySelector('.p-2');
+                if (icon) {
+                    icon.classList.remove('bg-white/20');
+                    icon.classList.add('bg-gray-100');
+                }
+                const svg = item.querySelector('svg');
+                if (svg) {
+                    svg.classList.remove('text-white');
+                    svg.classList.add('text-gray-600');
+                }
+            });
+            
+            // Show selected tab content
+            const selectedContent = document.getElementById(`content-${tabName}`);
+            if (selectedContent) {
+                selectedContent.classList.remove('hidden');
+            }
+            
+            // Add active class to selected sidebar item
+            const selectedTab = document.getElementById(`tab-${tabName}`);
+            if (selectedTab) {
+                selectedTab.classList.add('active-tab');
+                selectedTab.classList.remove('text-gray-700', 'hover:text-white');
+                selectedTab.classList.add('text-white');
+                const icon = selectedTab.querySelector('.p-2');
+                if (icon) {
+                    icon.classList.add('bg-white/20');
+                    icon.classList.remove('bg-gray-100');
+                }
+                const svg = selectedTab.querySelector('svg');
+                if (svg) {
+                    svg.classList.add('text-white');
+                    svg.classList.remove('text-gray-600');
+                }
+            }
+        }
+
+        // Dashboard functions
+        function updateDashboardStats() {
+            const today = new Date().toISOString().split('T')[0];
+            const todayOrders = orders.filter(order => order.date === today);
+            
+            document.getElementById('totalPesananHariIni').textContent = todayOrders.length;
+            
+            const todayRevenue = todayOrders.reduce((sum, order) => sum + order.paid, 0);
+            document.getElementById('pendapatanHariIni').textContent = formatCurrency(todayRevenue);
+            
+            const pendingOrders = orders.filter(order => order.status === 'Pending' || order.paymentStatus === 'Belum Bayar');
+            document.getElementById('pesananPending').textContent = pendingOrders.length;
+            
+            document.getElementById('totalPelanggan').textContent = customers.length;
+        }
+
+        function loadRecentOrders() {
+            const recentOrders = orders.slice(-5).reverse();
+            const tableBody = document.getElementById('recentOrdersTable');
+            
+            tableBody.innerHTML = recentOrders.map(order => `
+                <tr class="table-row transition-all duration-300 border-b border-gray-100">
+                    <td class="py-3 lg:py-4 px-3 lg:px-6 font-medium text-gray-800 text-sm lg:text-base">${order.id}</td>
+                    <td class="py-3 lg:py-4 px-3 lg:px-6 text-gray-600 text-sm lg:text-base">${order.customer}</td>
+                    <td class="py-3 lg:py-4 px-3 lg:px-6 text-gray-600 text-sm lg:text-base hidden sm:table-cell">${order.type}</td>
+                    <td class="py-3 lg:py-4 px-3 lg:px-6 font-semibold text-blue-600 text-sm lg:text-base">${formatCurrency(order.total)}</td>
+                    <td class="py-3 lg:py-4 px-3 lg:px-6">
+                        <span class="status-badge px-2 lg:px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(order.paymentStatus)}">
+                            ${order.paymentStatus}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function getStatusColor(status) {
+            switch(status) {
+                case 'Lunas': return 'bg-green-100 text-green-800';
+                case 'DP': return 'bg-yellow-100 text-yellow-800';
+                case 'Sebagian': return 'bg-blue-100 text-blue-800';
+                case 'Belum Bayar': return 'bg-red-100 text-red-800';
+                default: return 'bg-gray-100 text-gray-800';
+            }
+        }
+
+        // Initialize the application
+        function initializeDashboard() {
+            updateCurrentDate();
+            updateDashboardStats();
+            loadRecentOrders();
+            loadOrdersHarian();
+            loadOrdersTagihan();
+            loadCustomers();
+            loadTransactions();
+            loadInventory();
+            loadDeliveryNotes();
+            populateOrderDropdown();
+            
+            // Set interval for real-time updates
+            setInterval(updateCurrentDate, 1000);
+        }
+
+        // Load data functions
+        function loadOrdersHarian() {
+            const tableBody = document.getElementById('ordersHarianTable');
+            if (tableBody) {
+                tableBody.innerHTML = ordersHarian.map(order => `
+                    <tr class="table-row transition-all duration-300 border-b border-gray-100">
+                        <td class="py-2 lg:py-3 px-2 lg:px-4 font-medium text-xs lg:text-sm">${order.id}</td>
+                        <td class="py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm hidden sm:table-cell">${order.date}</td>
+                        <td class="py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm">${order.customer}</td>
+                        <td class="py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm hidden md:table-cell">${order.type}</td>
+                        <td class="py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm hidden lg:table-cell">${order.size}</td>
+                        <td class="py-2 lg:py-3 px-2 lg:px-4 text-xs lg:text-sm hidden lg:table-cell">${order.qty}</td>
+                        <td class="py-2 lg:py-3 px-2 lg:px-4 font-semibold text-blue-600 text-xs lg:text-sm">${formatCurrency(order.total)}</td>
+                        <td class="py-2 lg:py-3 px-2 lg:px-4">
+                            <span class="status-badge px-1 lg:px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(order.paymentStatus)}">
+                                ${order.paymentStatus}
+                            </span>
+                        </td>
+                        <td class="py-2 lg:py-3 px-2 lg:px-4 hidden sm:table-cell">
+                            <span class="px-1 lg:px-2 py-1 rounded-full text-xs font-medium ${order.status === 'Selesai' ? 'bg-green-100 text-green-800' : order.status === 'Proses' ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800'}">
+                                ${order.status}
+                            </span>
+                        </td>
+                        <td class="py-2 lg:py-3 px-2 lg:px-4">
+                            <div class="flex flex-col lg:flex-row gap-1 lg:gap-2">
+                                <button onclick="editOrder('${order.id}')" class="text-blue-600 hover:text-blue-800 text-xs lg:text-sm">Edit</button>
+                                <button onclick="processPayment('${order.id}')" class="text-green-600 hover:text-green-800 text-xs lg:text-sm">Bayar</button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        function loadOrdersTagihan() {
+            const tableBody = document.getElementById('ordersTagihanTable');
+            if (tableBody) {
+                tableBody.innerHTML = ordersTagihan.map(order => `
+                    <tr class="table-row transition-all duration-300 border-b border-gray-100">
+                        <td class="py-3 px-4 font-medium">${order.id}</td>
+                        <td class="py-3 px-4">${order.date}</td>
+                        <td class="py-3 px-4">${order.customer}</td>
+                        <td class="py-3 px-4">${order.type}</td>
+                        <td class="py-3 px-4 font-semibold text-blue-600">${formatCurrency(order.total)}</td>
+                        <td class="py-3 px-4 text-green-600">${formatCurrency(order.paid)}</td>
+                        <td class="py-3 px-4 text-red-600">${formatCurrency(order.remaining)}</td>
+                        <td class="py-3 px-4">${order.dueDate}</td>
+                        <td class="py-3 px-4">
+                            <span class="status-badge px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(order.paymentStatus)}">
+                                ${order.paymentStatus}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4">
+                            <button onclick="editOrder('${order.id}')" class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                            <button onclick="processPayment('${order.id}')" class="text-green-600 hover:text-green-800">Bayar</button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        function loadCustomers() {
+            const tableBody = document.getElementById('customersTable');
+            if (tableBody) {
+                tableBody.innerHTML = customers.map(customer => `
+                    <tr class="table-row transition-all duration-300 border-b border-gray-100">
+                        <td class="py-3 px-4 font-medium">${customer.id}</td>
+                        <td class="py-3 px-4">${customer.name}</td>
+                        <td class="py-3 px-4">${customer.phone}</td>
+                        <td class="py-3 px-4">${customer.email}</td>
+                        <td class="py-3 px-4">${customer.address}</td>
+                        <td class="py-3 px-4 text-center">${customer.orders}</td>
+                        <td class="py-3 px-4">
+                            <button onclick="editCustomer('${customer.id}')" class="text-blue-600 hover:text-blue-800">Edit</button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        function loadTransactions() {
+            const tableBody = document.getElementById('transactionsTable');
+            if (tableBody) {
+                tableBody.innerHTML = transactions.map(transaction => `
+                    <tr class="table-row transition-all duration-300 border-b border-gray-100">
+                        <td class="py-3 px-4">${transaction.date}</td>
+                        <td class="py-3 px-4">${transaction.description}</td>
+                        <td class="py-3 px-4">${transaction.category}</td>
+                        <td class="py-3 px-4 text-green-600 font-semibold">${transaction.income > 0 ? formatCurrency(transaction.income) : '-'}</td>
+                        <td class="py-3 px-4 text-red-600 font-semibold">${transaction.expense > 0 ? formatCurrency(transaction.expense) : '-'}</td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        function loadInventory() {
+            const tableBody = document.getElementById('inventoryTable');
+            if (tableBody) {
+                tableBody.innerHTML = inventory.map(item => `
+                    <tr class="table-row transition-all duration-300 border-b border-gray-100">
+                        <td class="py-3 px-4 font-medium">${item.code}</td>
+                        <td class="py-3 px-4">${item.name}</td>
+                        <td class="py-3 px-4">${item.category}</td>
+                        <td class="py-3 px-4 text-center">${item.stock}</td>
+                        <td class="py-3 px-4">${item.unit}</td>
+                        <td class="py-3 px-4 font-semibold">${formatCurrency(item.price)}</td>
+                        <td class="py-3 px-4">
+                            <span class="px-2 py-1 rounded-full text-xs font-medium ${item.status === 'Tersedia' ? 'bg-green-100 text-green-800' : item.status === 'Stok Rendah' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}">
+                                ${item.status}
+                            </span>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        function loadDeliveryNotes() {
+            const tableBody = document.getElementById('deliveryTable');
+            if (tableBody) {
+                tableBody.innerHTML = deliveryNotes.map(delivery => `
+                    <tr class="table-row transition-all duration-300 border-b border-gray-100">
+                        <td class="py-3 px-4 font-medium">${delivery.id}</td>
+                        <td class="py-3 px-4">${delivery.date}</td>
+                        <td class="py-3 px-4">${delivery.orderId}</td>
+                        <td class="py-3 px-4">${delivery.customer}</td>
+                        <td class="py-3 px-4">${delivery.address}</td>
+                        <td class="py-3 px-4">${delivery.courier}</td>
+                        <td class="py-3 px-4">
+                            <button onclick="printDeliveryNote('${delivery.id}')" class="text-blue-600 hover:text-blue-800">Print</button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        function populateOrderDropdown() {
+            const dropdown = document.getElementById('deliveryOrderId');
+            if (dropdown) {
+                dropdown.innerHTML = '<option value="">Pilih pesanan</option>' + 
+                    orders.map(order => `<option value="${order.id}">${order.id} - ${order.customer}</option>`).join('');
+            }
+        }
+
+        // Modal functions
+        function showAddOrderModal(type) {
+            document.getElementById('addOrderModal').classList.remove('hidden');
+            document.getElementById('addOrderModal').classList.add('flex');
+        }
+
+        function showAddCustomerModal() {
+            document.getElementById('addCustomerModal').classList.remove('hidden');
+            document.getElementById('addCustomerModal').classList.add('flex');
+        }
+
+        function showAddDeliveryModal() {
+            document.getElementById('addDeliveryModal').classList.remove('hidden');
+            document.getElementById('addDeliveryModal').classList.add('flex');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+            document.getElementById(modalId).classList.remove('flex');
+        }
+
+        // Placeholder functions for other features
+        function editOrder(id) { alert('Edit order: ' + id); }
+        function processPayment(id) { alert('Process payment for: ' + id); }
+        function editCustomer(id) { alert('Edit customer: ' + id); }
+        function printDeliveryNote(id) { alert('Print delivery note: ' + id); }
+        function generateInvoice() { alert('Generate invoice'); }
+
+        // Mobile menu functions
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobileMenuOverlay');
+            
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+
+        function closeMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobileMenuOverlay');
+            
+            sidebar.classList.add('-translate-x-full');
+            overlay.classList.add('hidden');
+        }
+
+        // Override showTab function to close mobile menu
+        const originalShowTab = showTab;
+        showTab = function(tabName) {
+            originalShowTab(tabName);
+            // Close mobile menu when tab is selected on mobile
+            if (window.innerWidth < 1024) {
+                closeMobileMenu();
+            }
+        };
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Login form handler
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const username = document.getElementById('loginUsername').value;
+                const password = document.getElementById('loginPassword').value;
+                
+                if (login(username, password)) {
+                    // Login successful - already handled in login function
+                } else {
+                    // Show error message
+                    alert('Username atau password salah! Gunakan: admin / admin123');
+                }
+            });
+
+            // Add order form handler
+            document.getElementById('addOrderForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Fitur tambah pesanan akan segera tersedia!');
+                closeModal('addOrderModal');
+            });
+
+            // Add customer form handler
+            document.getElementById('addCustomerForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Fitur tambah pelanggan akan segera tersedia!');
+                closeModal('addCustomerModal');
+            });
+
+            // Add delivery form handler
+            document.getElementById('addDeliveryForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Fitur buat surat jalan akan segera tersedia!');
+                closeModal('addDeliveryModal');
+            });
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975c189dd449df69',t:'MTc1NjMwMzIzOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
