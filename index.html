@@ -235,26 +235,7 @@
                     </button>
                 </form>
 
-                <!-- Demo Credentials -->
-                <div class="mt-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
-                    <h4 class="text-sm font-medium text-blue-800 mb-3">🔑 Demo Login:</h4>
-                    <div class="space-y-3">
-                        <div class="bg-white p-3 rounded-lg border border-blue-100">
-                            <div class="text-sm text-blue-700 space-y-1">
-                                <p><strong>👑 Admin (Full Access):</strong></p>
-                                <p>Username: <code class="bg-blue-100 px-2 py-1 rounded">admin</code></p>
-                                <p>Password: <code class="bg-blue-100 px-2 py-1 rounded">admin123</code></p>
-                            </div>
-                        </div>
-                        <div class="bg-white p-3 rounded-lg border border-green-100">
-                            <div class="text-sm text-green-700 space-y-1">
-                                <p><strong>👤 User (Limited Access):</strong></p>
-                                <p>Username: <code class="bg-green-100 px-2 py-1 rounded">user</code></p>
-                                <p>Password: <code class="bg-green-100 px-2 py-1 rounded">user123</code></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
             </div>
 
             <!-- Footer -->
@@ -341,6 +322,13 @@
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"></path>
                         </svg>
                         Daftar Harga
+                    </button>
+                    
+                    <button onclick="showTab('pengaturan')" class="sidebar-item w-full flex items-center px-4 py-3 text-left text-gray-700 rounded-xl transition-all duration-300" id="tab-pengaturan">
+                        <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
+                        </svg>
+                        Pengaturan
                     </button>
                 </div>
             </nav>
@@ -813,6 +801,131 @@
                         <!-- Price table will be populated here -->
                     </div>
                 </div>
+
+                <!-- Pengaturan Tab -->
+                <div id="content-pengaturan" class="hidden animate-fade-in">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-900">Pengaturan Perusahaan</h3>
+                            <p class="text-gray-600">Kelola informasi dan logo perusahaan</p>
+                        </div>
+                        <div class="flex space-x-3">
+                            <button onclick="exportAllData()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-xl font-semibold transition-all duration-300">
+                                💾 Backup Data
+                            </button>
+                            <button onclick="document.getElementById('import-file').click()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-xl font-semibold transition-all duration-300">
+                                📂 Import Data
+                            </button>
+                            <button onclick="resetAllData()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-xl font-semibold transition-all duration-300">
+                                🗑️ Reset Semua
+                            </button>
+                            <button onclick="resetCompanySettings()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-3 rounded-xl font-semibold transition-all duration-300">
+                                🔄 Reset Default
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Hidden file input for import -->
+                    <input type="file" id="import-file" accept=".json" style="display: none;" onchange="handleImportFile(this)">
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Company Info Form -->
+                        <div class="card-gradient rounded-2xl p-6 shadow-lg">
+                            <h4 class="text-lg font-bold text-gray-900 mb-6">📝 Informasi Perusahaan</h4>
+                            
+                            <form id="company-settings-form" class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Nama Perusahaan</label>
+                                    <input type="text" id="company-name" class="w-full px-4 py-3 border border-gray-300 rounded-xl input-focus transition-all duration-300" required>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Tagline/Slogan</label>
+                                    <input type="text" id="company-tagline" class="w-full px-4 py-3 border border-gray-300 rounded-xl input-focus transition-all duration-300" placeholder="Contoh: Professional Printing Services">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Alamat Lengkap</label>
+                                    <textarea id="company-address" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-xl input-focus transition-all duration-300 resize-none" placeholder="Alamat lengkap, telepon, email, dll." required></textarea>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Logo Perusahaan</label>
+                                    <div class="space-y-3">
+                                        <input type="file" id="company-logo-file" accept="image/*" class="w-full px-4 py-3 border border-gray-300 rounded-xl input-focus transition-all duration-300" onchange="handleLogoUpload(this)">
+                                        <div class="text-xs text-gray-500">
+                                            💡 Upload gambar logo (JPG, PNG, SVG) atau gunakan logo default
+                                        </div>
+                                        <div class="flex space-x-2">
+                                            <button type="button" onclick="useDefaultLogo()" class="px-3 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-sm">
+                                                🎨 Logo Default
+                                            </button>
+                                            <button type="button" onclick="clearLogo()" class="px-3 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors text-sm">
+                                                🗑️ Hapus Logo
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <button type="submit" class="w-full btn-primary text-white py-3 rounded-xl font-semibold">
+                                    💾 Simpan Pengaturan
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Preview Section -->
+                        <div class="card-gradient rounded-2xl p-6 shadow-lg">
+                            <h4 class="text-lg font-bold text-gray-900 mb-6">👁️ Preview</h4>
+                            
+                            <!-- Logo Preview -->
+                            <div class="mb-6">
+                                <h5 class="text-sm font-medium text-gray-700 mb-3">Logo Preview:</h5>
+                                <div class="flex items-center justify-center p-6 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
+                                    <div id="logo-preview" class="text-center">
+                                        <img id="logo-preview-img" src="" alt="Logo Preview" class="max-w-24 max-h-24 mx-auto mb-2 hidden">
+                                        <div id="logo-preview-placeholder" class="w-24 h-24 gradient-bg rounded-xl flex items-center justify-center mx-auto mb-2">
+                                            <span class="text-white font-bold text-2xl">FP</span>
+                                        </div>
+                                        <div class="text-xs text-gray-500">Logo Perusahaan</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Header Preview -->
+                            <div class="mb-6">
+                                <h5 class="text-sm font-medium text-gray-700 mb-3">Header Dokumen Preview:</h5>
+                                <div class="bg-white border border-gray-200 rounded-xl p-4">
+                                    <div class="text-center">
+                                        <div class="flex items-center justify-center mb-3">
+                                            <img id="header-logo-preview" src="" alt="Logo" class="max-w-12 max-h-12 mr-3 hidden">
+                                            <div id="header-logo-placeholder" class="w-12 h-12 gradient-bg rounded-lg flex items-center justify-center mr-3">
+                                                <span class="text-white font-bold text-sm">FP</span>
+                                            </div>
+                                            <div>
+                                                <div id="header-company-name" class="text-lg font-bold text-gray-900">FP DIGITAL PRINTING</div>
+                                                <div id="header-company-tagline" class="text-xs text-gray-600">Professional Printing Services</div>
+                                            </div>
+                                        </div>
+                                        <div id="header-company-address" class="text-xs text-gray-500 whitespace-pre-line">Jl. Merdeka No. 123, Jakarta Pusat 10110
+Telepon: (021) 1234-5678
+Email: info@fpdigitalprinting.com</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Usage Info -->
+                            <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                                <h5 class="text-sm font-medium text-blue-800 mb-2">ℹ️ Informasi Penggunaan:</h5>
+                                <div class="text-xs text-blue-700 space-y-1">
+                                    <p>• Logo dan informasi ini akan muncul di semua dokumen cetak</p>
+                                    <p>• Termasuk: Surat Jalan, Tagihan, dan Laporan</p>
+                                    <p>• Perubahan akan langsung diterapkan ke semua dokumen baru</p>
+                                    <p>• Ukuran logo optimal: 100x100 pixel atau rasio 1:1</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </main>
         </div>
     </div>
@@ -1224,162 +1337,399 @@
     </div>
 
     <script>
-        // Data Storage
-        let printPrices = {
-            'Banner/Spanduk': { 
-                dailyPrice: 75000, 
-                billingPrice: 75000, 
-                unit: 'Per Meter' 
+        // Data Storage with Persistence
+        let printPrices = {};
+        let customers = [];
+        let transactions = [];
+        let deliveries = [];
+        let invoices = [];
+        let invoiceCounter = 1;
+        let transactionCounter = 1;
+        let deliveryCounter = 1;
+
+        // Default data for first-time users
+        const defaultData = {
+            printPrices: {
+                'Banner/Spanduk': { 
+                    dailyPrice: 75000, 
+                    billingPrice: 75000, 
+                    unit: 'Per Meter' 
+                },
+                'Stiker': { 
+                    dailyPrice: 25000, 
+                    billingPrice: 25000, 
+                    unit: 'Per Meter' 
+                },
+                'Albatros': { 
+                    dailyPrice: 45000, 
+                    billingPrice: 45000, 
+                    unit: 'Per Meter' 
+                },
+                'Oneway': { 
+                    dailyPrice: 35000, 
+                    billingPrice: 35000, 
+                    unit: 'Per Meter' 
+                },
+                'Brosur A4 (HVS)': { 
+                    dailyPrice: 1500, 
+                    billingPrice: 1500, 
+                    unit: 'Per Pcs' 
+                },
+                'Brosur A4 (Ap120gr)': { 
+                    dailyPrice: 2500, 
+                    billingPrice: 2500, 
+                    unit: 'Per Pcs' 
+                },
+                'Poster A3': { 
+                    dailyPrice: 15000, 
+                    billingPrice: 15000, 
+                    unit: 'Per Lembar' 
+                },
+                'Stempel': { 
+                    dailyPrice: 50000, 
+                    billingPrice: 50000, 
+                    unit: 'Per Pcs' 
+                },
+                'Id Card': { 
+                    dailyPrice: 8000, 
+                    billingPrice: 8000, 
+                    unit: 'Per Pcs' 
+                },
+                'Kartu Nama': { 
+                    dailyPrice: 3000, 
+                    billingPrice: 3000, 
+                    unit: 'Per Pcs' 
+                }
             },
-            'Stiker': { 
-                dailyPrice: 25000, 
-                billingPrice: 25000, 
-                unit: 'Per Meter' 
-            },
-            'Albatros': { 
-                dailyPrice: 45000, 
-                billingPrice: 45000, 
-                unit: 'Per Meter' 
-            },
-            'Oneway': { 
-                dailyPrice: 35000, 
-                billingPrice: 35000, 
-                unit: 'Per Meter' 
-            },
-            'Brosur A4 (HVS)': { 
-                dailyPrice: 1500, 
-                billingPrice: 1500, 
-                unit: 'Per Pcs' 
-            },
-            'Brosur A4 (Ap120gr)': { 
-                dailyPrice: 2500, 
-                billingPrice: 2500, 
-                unit: 'Per Pcs' 
-            },
-            'Poster A3': { 
-                dailyPrice: 15000, 
-                billingPrice: 15000, 
-                unit: 'Per Lembar' 
-            },
-            'Stempel': { 
-                dailyPrice: 50000, 
-                billingPrice: 50000, 
-                unit: 'Per Pcs' 
-            },
-            'Id Card': { 
-                dailyPrice: 8000, 
-                billingPrice: 8000, 
-                unit: 'Per Pcs' 
-            },
-            'Kartu Nama': { 
-                dailyPrice: 3000, 
-                billingPrice: 3000, 
-                unit: 'Per Pcs' 
+            customers: [
+                {
+                    id: 1,
+                    name: 'Budi Santoso',
+                    email: 'budi@email.com',
+                    phone: '081234567890',
+                    address: 'Jl. Merdeka No. 123, Jakarta Pusat',
+                    totalTransactions: 3
+                },
+                {
+                    id: 2,
+                    name: 'Siti Rahayu',
+                    email: 'siti@email.com',
+                    phone: '081234567891',
+                    address: 'Jl. Sudirman No. 456, Jakarta Selatan',
+                    totalTransactions: 2
+                },
+                {
+                    id: 3,
+                    name: 'Ahmad Wijaya',
+                    email: 'ahmad@email.com',
+                    phone: '081234567892',
+                    address: 'Jl. Thamrin No. 789, Jakarta Pusat',
+                    totalTransactions: 1
+                }
+            ],
+            transactions: [
+                {
+                    id: 1,
+                    invoiceNumber: 'TXN-001',
+                    date: '2024-01-15',
+                    time: '10:30',
+                    customer: 'Budi Santoso',
+                    service: 'Banner/Spanduk',
+                    quantity: 2,
+                    total: 150000,
+                    status: 'Selesai',
+                    description: 'Cetak Banner 2x3m',
+                    type: 'daily'
+                },
+                {
+                    id: 2,
+                    invoiceNumber: 'TXN-002',
+                    date: '2024-01-16',
+                    time: '14:15',
+                    customer: 'Siti Rahayu',
+                    service: 'Stiker',
+                    quantity: 5,
+                    total: 125000,
+                    status: 'Selesai',
+                    description: 'Stiker promosi',
+                    type: 'daily'
+                }
+            ],
+            deliveries: [
+                {
+                    id: 1,
+                    deliveryNumber: 'SJ-001',
+                    date: '2024-01-15',
+                    customer: 'Budi Santoso',
+                    address: 'Jl. Merdeka No. 123, Jakarta',
+                    items: 'Banner 2x3m (2 pcs)',
+                    status: 'Terkirim',
+                    notes: 'Pengiriman sesuai jadwal',
+                    invoiceRef: 'INV-001'
+                }
+            ],
+            invoices: [
+                {
+                    id: 1,
+                    invoiceNumber: 'INV-001',
+                    date: '2024-01-15',
+                    dueDate: '2024-01-30',
+                    customer: 'Budi Santoso',
+                    items: [
+                        {
+                            description: 'Banner/Spanduk',
+                            quantity: 2,
+                            unit: 'Per Meter',
+                            price: 75000,
+                            total: 150000
+                        }
+                    ],
+                    subtotal: 150000,
+                    tax: 16500,
+                    total: 166500,
+                    status: 'Belum Dibayar',
+                    notes: 'Banner promosi untuk acara'
+                }
+            ],
+            counters: {
+                invoiceCounter: 2,
+                transactionCounter: 3,
+                deliveryCounter: 2
             }
         };
 
-        let customers = [
-            {
-                id: 1,
-                name: 'Budi Santoso',
-                email: 'budi@email.com',
-                phone: '081234567890',
-                address: 'Jl. Merdeka No. 123, Jakarta Pusat',
-                totalTransactions: 3
-            },
-            {
-                id: 2,
-                name: 'Siti Rahayu',
-                email: 'siti@email.com',
-                phone: '081234567891',
-                address: 'Jl. Sudirman No. 456, Jakarta Selatan',
-                totalTransactions: 2
-            },
-            {
-                id: 3,
-                name: 'Ahmad Wijaya',
-                email: 'ahmad@email.com',
-                phone: '081234567892',
-                address: 'Jl. Thamrin No. 789, Jakarta Pusat',
-                totalTransactions: 1
+        // Data Persistence Functions
+        function saveAllData() {
+            try {
+                const dataToSave = {
+                    printPrices: printPrices,
+                    customers: customers,
+                    transactions: transactions,
+                    deliveries: deliveries,
+                    invoices: invoices,
+                    counters: {
+                        invoiceCounter: invoiceCounter,
+                        transactionCounter: transactionCounter,
+                        deliveryCounter: deliveryCounter
+                    },
+                    lastSaved: new Date().toISOString()
+                };
+                
+                localStorage.setItem('fpDigitalPrintingData', JSON.stringify(dataToSave));
+                console.log('✅ Data berhasil disimpan:', new Date().toLocaleString('id-ID'));
+            } catch (error) {
+                console.error('❌ Error menyimpan data:', error);
+                alert('⚠️ Gagal menyimpan data ke penyimpanan lokal. Pastikan browser mendukung localStorage.');
             }
-        ];
+        }
 
-        let transactions = [
-            {
-                id: 1,
-                invoiceNumber: 'TXN-001',
-                date: '2024-01-15',
-                time: '10:30',
-                customer: 'Budi Santoso',
-                service: 'Banner/Spanduk',
-                quantity: 2,
-                total: 150000,
-                status: 'Selesai',
-                description: 'Cetak Banner 2x3m',
-                type: 'daily'
-            },
-            {
-                id: 2,
-                invoiceNumber: 'TXN-002',
-                date: '2024-01-16',
-                time: '14:15',
-                customer: 'Siti Rahayu',
-                service: 'Stiker',
-                quantity: 5,
-                total: 125000,
-                status: 'Selesai',
-                description: 'Stiker promosi',
-                type: 'daily'
-            }
-        ];
-
-        let deliveries = [
-            {
-                id: 1,
-                deliveryNumber: 'SJ-001',
-                date: '2024-01-15',
-                customer: 'Budi Santoso',
-                address: 'Jl. Merdeka No. 123, Jakarta',
-                items: 'Banner 2x3m (2 pcs)',
-                status: 'Terkirim',
-                notes: 'Pengiriman sesuai jadwal',
-                invoiceRef: 'INV-001'
-            }
-        ];
-
-        let invoices = [
-            {
-                id: 1,
-                invoiceNumber: 'INV-001',
-                date: '2024-01-15',
-                dueDate: '2024-01-30',
-                customer: 'Budi Santoso',
-                items: [
-                    {
-                        description: 'Banner/Spanduk',
-                        quantity: 2,
-                        unit: 'Per Meter',
-                        price: 75000,
-                        total: 150000
+        function loadAllData() {
+            try {
+                const savedData = localStorage.getItem('fpDigitalPrintingData');
+                
+                if (savedData) {
+                    const parsedData = JSON.parse(savedData);
+                    
+                    // Load all data arrays
+                    printPrices = parsedData.printPrices || defaultData.printPrices;
+                    customers = parsedData.customers || defaultData.customers;
+                    transactions = parsedData.transactions || defaultData.transactions;
+                    deliveries = parsedData.deliveries || defaultData.deliveries;
+                    invoices = parsedData.invoices || defaultData.invoices;
+                    
+                    // Load counters
+                    if (parsedData.counters) {
+                        invoiceCounter = parsedData.counters.invoiceCounter || 1;
+                        transactionCounter = parsedData.counters.transactionCounter || 1;
+                        deliveryCounter = parsedData.counters.deliveryCounter || 1;
                     }
-                ],
-                subtotal: 150000,
-                tax: 16500,
-                total: 166500,
-                status: 'Belum Dibayar',
-                notes: 'Banner promosi untuk acara'
+                    
+                    console.log('✅ Data berhasil dimuat dari penyimpanan:', parsedData.lastSaved || 'Unknown');
+                    return true;
+                } else {
+                    // First time user - load default data
+                    printPrices = { ...defaultData.printPrices };
+                    customers = [...defaultData.customers];
+                    transactions = [...defaultData.transactions];
+                    deliveries = [...defaultData.deliveries];
+                    invoices = [...defaultData.invoices];
+                    invoiceCounter = defaultData.counters.invoiceCounter;
+                    transactionCounter = defaultData.counters.transactionCounter;
+                    deliveryCounter = defaultData.counters.deliveryCounter;
+                    
+                    // Save default data
+                    saveAllData();
+                    console.log('✅ Data default dimuat untuk pengguna baru');
+                    return false;
+                }
+            } catch (error) {
+                console.error('❌ Error memuat data:', error);
+                // Fallback to default data
+                printPrices = { ...defaultData.printPrices };
+                customers = [...defaultData.customers];
+                transactions = [...defaultData.transactions];
+                deliveries = [...defaultData.deliveries];
+                invoices = [...defaultData.invoices];
+                invoiceCounter = defaultData.counters.invoiceCounter;
+                transactionCounter = defaultData.counters.transactionCounter;
+                deliveryCounter = defaultData.counters.deliveryCounter;
+                
+                alert('⚠️ Terjadi kesalahan saat memuat data. Menggunakan data default.');
+                return false;
             }
-        ];
+        }
 
-        let invoiceCounter = 2;
-        let transactionCounter = 3;
-        let deliveryCounter = 2;
+        function exportAllData() {
+            try {
+                const exportData = {
+                    printPrices: printPrices,
+                    customers: customers,
+                    transactions: transactions,
+                    deliveries: deliveries,
+                    invoices: invoices,
+                    counters: {
+                        invoiceCounter: invoiceCounter,
+                        transactionCounter: transactionCounter,
+                        deliveryCounter: deliveryCounter
+                    },
+                    exportDate: new Date().toISOString(),
+                    version: '1.0'
+                };
+                
+                const dataStr = JSON.stringify(exportData, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(dataBlob);
+                link.download = `fp-digital-backup-${new Date().toISOString().split('T')[0]}.json`;
+                link.click();
+                
+                alert(`✅ Backup data berhasil diunduh!\n\nFile: fp-digital-backup-${new Date().toISOString().split('T')[0]}.json\n\nSimpan file ini di tempat yang aman untuk restore data di kemudian hari.`);
+            } catch (error) {
+                console.error('❌ Error export data:', error);
+                alert('❌ Gagal mengekspor data. Silakan coba lagi.');
+            }
+        }
+
+        function importAllData(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    
+                    // Validate imported data structure
+                    if (!importedData.printPrices || !importedData.customers || !importedData.transactions) {
+                        throw new Error('Format file backup tidak valid');
+                    }
+                    
+                    // Confirm import
+                    const confirmMessage = `🔄 IMPORT DATA BACKUP\n\nFile: ${file.name}\nTanggal Export: ${importedData.exportDate ? new Date(importedData.exportDate).toLocaleString('id-ID') : 'Unknown'}\nVersi: ${importedData.version || 'Unknown'}\n\nData yang akan diimport:\n• ${Object.keys(importedData.printPrices || {}).length} jenis cetakan\n• ${(importedData.customers || []).length} pelanggan\n• ${(importedData.transactions || []).length} transaksi\n• ${(importedData.invoices || []).length} tagihan\n• ${(importedData.deliveries || []).length} surat jalan\n\n⚠️ PERINGATAN: Data saat ini akan diganti dengan data backup!\n\nApakah Anda yakin ingin melanjutkan?`;
+                    
+                    if (confirm(confirmMessage)) {
+                        // Import all data
+                        printPrices = importedData.printPrices || {};
+                        customers = importedData.customers || [];
+                        transactions = importedData.transactions || [];
+                        deliveries = importedData.deliveries || [];
+                        invoices = importedData.invoices || [];
+                        
+                        // Import counters
+                        if (importedData.counters) {
+                            invoiceCounter = importedData.counters.invoiceCounter || 1;
+                            transactionCounter = importedData.counters.transactionCounter || 1;
+                            deliveryCounter = importedData.counters.deliveryCounter || 1;
+                        }
+                        
+                        // Save imported data
+                        saveAllData();
+                        
+                        // Refresh all displays
+                        updateDashboardStats();
+                        renderCustomers();
+                        updateCustomerStats();
+                        renderPriceCards();
+                        renderInvoices();
+                        updateInvoiceStats();
+                        updateDailyTransactionStats();
+                        renderDailyTransactions();
+                        renderDeliveries();
+                        updateDeliveryStats();
+                        
+                        alert(`✅ Data berhasil diimport!\n\nSemua data telah diganti dengan data dari backup.\nSilakan periksa semua tab untuk memastikan data sudah benar.`);
+                    }
+                } catch (error) {
+                    console.error('❌ Error import data:', error);
+                    alert(`❌ Gagal mengimport data!\n\nError: ${error.message}\n\nPastikan file backup valid dan tidak rusak.`);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function resetAllData() {
+            if (confirm('🔄 RESET SEMUA DATA\n\n⚠️ PERINGATAN KERAS!\nSemua data akan dihapus dan dikembalikan ke pengaturan awal:\n\n• Semua pelanggan akan dihapus\n• Semua transaksi akan dihapus\n• Semua tagihan akan dihapus\n• Semua surat jalan akan dihapus\n• Harga cetakan dikembalikan ke default\n• Pengaturan perusahaan direset\n\nData yang dihapus TIDAK DAPAT dikembalikan!\n\nApakah Anda BENAR-BENAR yakin?')) {
+                if (confirm('⚠️ KONFIRMASI TERAKHIR!\n\nIni adalah peringatan terakhir!\nSemua data akan HILANG PERMANEN!\n\nKetik "RESET" di kotak dialog berikutnya untuk melanjutkan.')) {
+                    const confirmation = prompt('Ketik "RESET" (huruf besar) untuk mengkonfirmasi penghapusan semua data:');
+                    
+                    if (confirmation === 'RESET') {
+                        // Clear localStorage
+                        localStorage.removeItem('fpDigitalPrintingData');
+                        localStorage.removeItem('companySettings');
+                        
+                        // Reset to default data
+                        printPrices = { ...defaultData.printPrices };
+                        customers = [...defaultData.customers];
+                        transactions = [...defaultData.transactions];
+                        deliveries = [...defaultData.deliveries];
+                        invoices = [...defaultData.invoices];
+                        invoiceCounter = defaultData.counters.invoiceCounter;
+                        transactionCounter = defaultData.counters.transactionCounter;
+                        deliveryCounter = defaultData.counters.deliveryCounter;
+                        
+                        // Reset company settings
+                        companySettings = {
+                            name: 'FP DIGITAL PRINTING',
+                            tagline: 'Professional Printing Services',
+                            address: 'Jl. Merdeka No. 123, Jakarta Pusat 10110\nTelepon: (021) 1234-5678\nEmail: info@fpdigitalprinting.com',
+                            logo: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiByeD0iMjAiIGZpbGw9InVybCgjZ3JhZGllbnQwX2xpbmVhcl8xXzEpIi8+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWRpZW50MF9saW5lYXJfMV8xIiB4MT0iMCIgeTE9IjAiIHgyPSIxMDAiIHkyPSIxMDAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iIzY2N0VFQSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM3NjRCQTIiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8dGV4dCB4PSI1MCIgeT0iNjAiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0MCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5GUDwvdGV4dD4KPC9zdmc+'
+                        };
+                        
+                        // Save default data
+                        saveAllData();
+                        
+                        // Refresh all displays
+                        updateDashboardStats();
+                        renderCustomers();
+                        updateCustomerStats();
+                        renderPriceCards();
+                        renderInvoices();
+                        updateInvoiceStats();
+                        updateDailyTransactionStats();
+                        renderDailyTransactions();
+                        renderDeliveries();
+                        updateDeliveryStats();
+                        loadCompanySettings();
+                        updateSidebarLogo();
+                        
+                        alert('✅ RESET BERHASIL!\n\nSemua data telah dikembalikan ke pengaturan awal.\nSistem siap digunakan dengan data default.');
+                    } else {
+                        alert('❌ Reset dibatalkan.\n\nKonfirmasi tidak sesuai. Data Anda tetap aman.');
+                    }
+                }
+            }
+        }
+
+        // Company Settings
+        let companySettings = {
+            name: 'FP DIGITAL PRINTING',
+            tagline: 'Professional Printing Services',
+            address: 'Jl. Merdeka No. 123, Jakarta Pusat 10110\nTelepon: (021) 1234-5678\nEmail: info@fpdigitalprinting.com',
+            logo: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiByeD0iMjAiIGZpbGw9InVybCgjZ3JhZGllbnQwX2xpbmVhcl8xXzEpIi8+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWRpZW50MF9saW5lYXJfMV8xIiB4MT0iMCIgeTE9IjAiIHgyPSIxMDAiIHkyPSIxMDAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iIzY2N0VFQSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM3NjRCQTIiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8dGV4dCB4PSI1MCIgeT0iNjAiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0MCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5GUDwvdGV4dD4KPC9zdmc+'
+        };
 
         // Tab Management
         function showTab(tabName) {
             // Hide all content
-            const contents = ['dashboard', 'transaksi-harian', 'tagihan', 'surat-jalan', 'laporan', 'pelanggan', 'harga'];
+            const contents = ['dashboard', 'transaksi-harian', 'tagihan', 'surat-jalan', 'laporan', 'pelanggan', 'harga', 'pengaturan'];
             contents.forEach(content => {
                 document.getElementById(`content-${content}`).classList.add('hidden');
                 document.getElementById(`tab-${content}`).classList.remove('active-tab');
@@ -1397,7 +1747,8 @@
                 'surat-jalan': { title: 'Surat Jalan', subtitle: 'Kelola pengiriman dan surat jalan' },
                 laporan: { title: 'Laporan', subtitle: 'Analisis performa bisnis Anda' },
                 pelanggan: { title: 'Pelanggan', subtitle: 'Kelola informasi pelanggan' },
-                harga: { title: 'Daftar Harga', subtitle: 'Kelola harga untuk setiap jenis cetakan' }
+                harga: { title: 'Daftar Harga', subtitle: 'Kelola harga untuk setiap jenis cetakan' },
+                pengaturan: { title: 'Pengaturan', subtitle: 'Kelola informasi dan logo perusahaan' }
             };
 
             document.getElementById('page-title').textContent = titles[tabName].title;
@@ -1412,6 +1763,8 @@
                 updateDashboardStats();
             } else if (tabName === 'harga') {
                 renderPriceCards();
+            } else if (tabName === 'pengaturan') {
+                loadCompanySettings();
             } else if (tabName === 'tagihan') {
                 renderInvoices();
                 updateInvoiceStats();
@@ -1492,6 +1845,7 @@
                 alert(`✅ Pelanggan baru berhasil ditambahkan!\n\nNama: ${name}\nEmail: ${email}\nTelepon: ${phone}`);
             }
 
+            saveAllData(); // Auto-save
             renderCustomers();
             updateDashboardStats();
             closeCustomerModal();
@@ -1620,6 +1974,7 @@
             
             if (confirm(confirmMessage)) {
                 customers = customers.filter(c => c.id !== id);
+                saveAllData(); // Auto-save
                 renderCustomers();
                 updateDashboardStats();
                 updateCustomerStats();
@@ -2003,6 +2358,7 @@
         function deletePrice(type) {
             if (confirm(`Apakah Anda yakin ingin menghapus jenis cetakan "${type}"?`)) {
                 delete printPrices[type];
+                saveAllData(); // Auto-save
                 renderPriceCards();
             }
         }
@@ -2016,6 +2372,7 @@
                 billingPrice: parseInt(billingPrice)
             };
             
+            saveAllData(); // Auto-save
             renderPriceCards();
             closePriceModal();
             
@@ -2129,6 +2486,11 @@
             createDelivery();
         });
 
+        document.getElementById('company-settings-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            saveCompanySettings();
+        });
+
         // Login Management
         function togglePassword() {
             const passwordInput = document.getElementById('login-password');
@@ -2159,7 +2521,7 @@
         }
 
         function setupUserInterface(userRole) {
-            const adminOnlyTabs = ['laporan', 'pelanggan', 'harga'];
+            const adminOnlyTabs = ['laporan', 'pelanggan', 'harga', 'pengaturan'];
             
             if (userRole === 'user') {
                 // Hide admin-only tabs for regular users
@@ -2183,6 +2545,156 @@
                         tabButton.style.display = 'flex';
                     }
                 });
+            }
+        }
+
+        // Company Settings Functions
+        function loadCompanySettings() {
+            document.getElementById('company-name').value = companySettings.name;
+            document.getElementById('company-tagline').value = companySettings.tagline;
+            document.getElementById('company-address').value = companySettings.address;
+            
+            updateCompanyPreview();
+        }
+
+        function updateCompanyPreview() {
+            // Update preview elements
+            document.getElementById('header-company-name').textContent = companySettings.name;
+            document.getElementById('header-company-tagline').textContent = companySettings.tagline;
+            document.getElementById('header-company-address').textContent = companySettings.address;
+            
+            // Update logo preview
+            if (companySettings.logo && companySettings.logo !== 'default') {
+                // Show custom logo
+                document.getElementById('logo-preview-img').src = companySettings.logo;
+                document.getElementById('logo-preview-img').classList.remove('hidden');
+                document.getElementById('logo-preview-placeholder').classList.add('hidden');
+                
+                document.getElementById('header-logo-preview').src = companySettings.logo;
+                document.getElementById('header-logo-preview').classList.remove('hidden');
+                document.getElementById('header-logo-placeholder').classList.add('hidden');
+            } else {
+                // Show default logo placeholder
+                document.getElementById('logo-preview-img').classList.add('hidden');
+                document.getElementById('logo-preview-placeholder').classList.remove('hidden');
+                
+                document.getElementById('header-logo-preview').classList.add('hidden');
+                document.getElementById('header-logo-placeholder').classList.remove('hidden');
+            }
+        }
+
+        function handleLogoUpload(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            // Validate file type
+            const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/svg+xml'];
+            if (!validTypes.includes(file.type)) {
+                alert('❌ Format file tidak didukung!\n\nGunakan format: JPG, PNG, atau SVG');
+                input.value = '';
+                return;
+            }
+            
+            // Validate file size (max 2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                alert('❌ Ukuran file terlalu besar!\n\nMaksimal 2MB');
+                input.value = '';
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                companySettings.logo = e.target.result;
+                updateCompanyPreview();
+                
+                alert(`✅ Logo berhasil diupload!\n\nFile: ${file.name}\nUkuran: ${(file.size / 1024).toFixed(1)} KB\n\nLogo akan diterapkan setelah menyimpan pengaturan.`);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function useDefaultLogo() {
+            companySettings.logo = companySettings.logo || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiByeD0iMjAiIGZpbGw9InVybCgjZ3JhZGllbnQwX2xpbmVhcl8xXzEpIi8+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWRpZW50MF9saW5lYXJfMV8xIiB4MT0iMCIgeTE9IjAiIHgyPSIxMDAiIHkyPSIxMDAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iIzY2N0VFQSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM3NjRCQTIiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8dGV4dCB4PSI1MCIgeT0iNjAiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0MCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5GUDwvdGV4dD4KPC9zdmc+';
+            updateCompanyPreview();
+            
+            // Clear file input
+            document.getElementById('company-logo-file').value = '';
+            
+            alert('🎨 Logo default berhasil diterapkan!\n\nLogo gradient biru dengan teks "FP" akan digunakan.');
+        }
+
+        function clearLogo() {
+            if (confirm('🗑️ Hapus Logo?\n\nApakah Anda yakin ingin menghapus logo perusahaan?\n\nLogo akan dikembalikan ke placeholder default.')) {
+                companySettings.logo = null;
+                updateCompanyPreview();
+                
+                // Clear file input
+                document.getElementById('company-logo-file').value = '';
+                
+                alert('✅ Logo berhasil dihapus!\n\nPlaceholder default akan digunakan.');
+            }
+        }
+
+        function saveCompanySettings() {
+            const name = document.getElementById('company-name').value.trim();
+            const tagline = document.getElementById('company-tagline').value.trim();
+            const address = document.getElementById('company-address').value.trim();
+            
+            if (!name || !address) {
+                alert('❌ Silakan lengkapi nama perusahaan dan alamat!');
+                return;
+            }
+            
+            // Update company settings
+            companySettings.name = name;
+            companySettings.tagline = tagline;
+            companySettings.address = address;
+            
+            // Save to localStorage
+            localStorage.setItem('companySettings', JSON.stringify(companySettings));
+            
+            updateCompanyPreview();
+            updateSidebarLogo();
+            
+            alert(`✅ Pengaturan perusahaan berhasil disimpan!\n\n🏢 ${name}\n🎯 ${tagline}\n📍 ${address.split('\n')[0]}\n\nPerubahan akan diterapkan ke semua dokumen baru.`);
+        }
+
+        function resetCompanySettings() {
+            if (confirm('🔄 Reset ke Pengaturan Default?\n\nSemua perubahan akan dikembalikan ke pengaturan awal:\n\n• Nama: FP DIGITAL PRINTING\n• Tagline: Professional Printing Services\n• Alamat: Default\n• Logo: Default\n\nApakah Anda yakin?')) {
+                companySettings = {
+                    name: 'FP DIGITAL PRINTING',
+                    tagline: 'Professional Printing Services',
+                    address: 'Jl. Merdeka No. 123, Jakarta Pusat 10110\nTelepon: (021) 1234-5678\nEmail: info@fpdigitalprinting.com',
+                    logo: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiByeD0iMjAiIGZpbGw9InVybCgjZ3JhZGllbnQwX2xpbmVhcl8xXzEpIi8+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWRpZW50MF9saW5lYXJfMV8xIiB4MT0iMCIgeTE9IjAiIHgyPSIxMDAiIHkyPSIxMDAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iIzY2N0VFQSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM3NjRCQTIiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8dGV4dCB4PSI1MCIgeT0iNjAiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0MCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5GUDwvdGV4dD4KPC9zdmc+'
+                };
+                
+                // Clear localStorage
+                localStorage.removeItem('companySettings');
+                
+                // Clear file input
+                document.getElementById('company-logo-file').value = '';
+                
+                loadCompanySettings();
+                updateSidebarLogo();
+                
+                alert('✅ Pengaturan berhasil direset ke default!\n\nSemua perubahan telah dikembalikan ke pengaturan awal.');
+            }
+        }
+
+        function updateSidebarLogo() {
+            // Update sidebar logo and company name
+            const sidebarLogo = document.querySelector('.sidebar-gradient .w-10.h-10');
+            const sidebarName = document.querySelector('.sidebar-gradient h1');
+            const sidebarTagline = document.querySelector('.sidebar-gradient p');
+            
+            if (sidebarName) sidebarName.textContent = companySettings.name.split(' ')[0] + ' ' + (companySettings.name.split(' ')[1] || '');
+            if (sidebarTagline) sidebarTagline.textContent = 'Printing System';
+            
+            // Update logo in sidebar if custom logo exists
+            if (companySettings.logo && companySettings.logo !== 'default' && sidebarLogo) {
+                // For now, keep the gradient background with initials
+                // Could be enhanced to show actual logo in future
+                const initials = companySettings.name.split(' ').map(word => word.charAt(0)).join('').substring(0, 2);
+                sidebarLogo.querySelector('span').textContent = initials;
             }
         }
 
@@ -2264,7 +2776,7 @@
                 document.getElementById('tab-dashboard').classList.add('active-tab');
                 
                 // Reset all content visibility
-                const contents = ['dashboard', 'transaksi-harian', 'tagihan', 'surat-jalan', 'laporan', 'pelanggan', 'harga'];
+                const contents = ['dashboard', 'transaksi-harian', 'tagihan', 'surat-jalan', 'laporan', 'pelanggan', 'harga', 'pengaturan'];
                 contents.forEach(content => {
                     const contentEl = document.getElementById(`content-${content}`);
                     if (contentEl) {
@@ -2349,7 +2861,7 @@
                 
                 alert(`✅ Selamat datang, ${username}!\n\nRole: ${roleText}\n${accessText}\n\nAnda berhasil masuk ke sistem FP Digital Printing.`);
             } else {
-                alert('❌ Username atau password salah!\n\nSilakan periksa kembali kredensial Anda.\n\n💡 Gunakan demo login:\n👑 Admin: admin / admin123\n👤 User: user / user123');
+                alert('❌ Username atau password salah!\n\nSilakan periksa kembali kredensial Anda.');
                 
                 // Clear password field
                 document.getElementById('login-password').value = '';
@@ -2398,8 +2910,19 @@
             `;
         }
 
+        function handleImportFile(input) {
+            const file = input.files[0];
+            if (file) {
+                importAllData(file);
+                input.value = ''; // Clear the input
+            }
+        }
+
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
+            // Load all data first
+            loadAllData();
+            
             // Mobile menu event listeners
             document.getElementById('mobile-menu-btn').addEventListener('click', toggleMobileMenu);
             document.getElementById('mobile-overlay').addEventListener('click', closeMobileMenu);
@@ -2411,11 +2934,18 @@
                 });
             });
             
+            // Load company settings from localStorage
+            const savedSettings = localStorage.getItem('companySettings');
+            if (savedSettings) {
+                companySettings = JSON.parse(savedSettings);
+            }
+            
             // Check login state first
             if (checkLoginState()) {
                 // User is logged in, initialize app based on role
                 const userRole = localStorage.getItem('userRole');
                 updateDashboardStats();
+                updateSidebarLogo();
                 if (userRole === 'admin') {
                     renderCustomers();
                     updateCustomerStats();
@@ -2694,6 +3224,7 @@
                 alert(`✅ Tagihan berhasil dibuat!\n\nNo. Tagihan: ${invoiceNumber}\nPelanggan: ${customer}\nTotal: Rp ${Math.round(total).toLocaleString('id-ID')}\nJatuh Tempo: ${dueDate}`);
             }
             
+            saveAllData(); // Auto-save
             renderInvoices();
             updateInvoiceStats();
             updateDashboardStats();
@@ -2878,6 +3409,7 @@
             }
             
             // Update displays
+            saveAllData(); // Auto-save
             renderDeliveries();
             updateDeliveryStats();
             closeDeliveryModal();
@@ -3335,8 +3867,18 @@
                     <div class="container">
                         <!-- Header -->
                         <div class="header">
-                            <div class="company-name">FP DIGITAL PRINTING</div>
-                            <div class="company-tagline">Professional Printing Services</div>
+                            ${companySettings.logo && companySettings.logo !== 'default' ? `
+                                <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
+                                    <img src="${companySettings.logo}" alt="Logo" style="max-width: 80px; max-height: 80px; margin-right: 15px;">
+                                    <div>
+                                        <div class="company-name">${companySettings.name}</div>
+                                        <div class="company-tagline">${companySettings.tagline}</div>
+                                    </div>
+                                </div>
+                            ` : `
+                                <div class="company-name">${companySettings.name}</div>
+                                <div class="company-tagline">${companySettings.tagline}</div>
+                            `}
                             <div class="document-title">SURAT JALAN</div>
                         </div>
                         
@@ -3445,7 +3987,8 @@
                         <!-- Footer -->
                         <div class="footer">
                             <div>Dokumen ini dicetak secara otomatis pada ${new Date().toLocaleString('id-ID')}</div>
-                            <div>FP Digital Printing - Professional Printing Services</div>
+                            <div>${companySettings.name} - ${companySettings.tagline}</div>
+                            <div style="font-size: 10px; margin-top: 5px; white-space: pre-line;">${companySettings.address}</div>
                         </div>
                     </div>
                 </body>
@@ -3694,6 +4237,7 @@
             }
             
             // Update displays
+            saveAllData(); // Auto-save
             updateDashboardStats();
             updateDailyTransactionStats();
             renderDailyTransactions();
@@ -3848,8 +4392,20 @@
                 </head>
                 <body>
                     <div class="header">
-                        <h2>FP DIGITAL PRINTING</h2>
-                        <p>Detail Transaksi Harian</p>
+                        ${companySettings.logo && companySettings.logo !== 'default' ? `
+                            <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
+                                <img src="${companySettings.logo}" alt="Logo" style="max-width: 50px; max-height: 50px; margin-right: 10px;">
+                                <div>
+                                    <h2>${companySettings.name}</h2>
+                                    <p style="margin: 0; font-size: 12px;">${companySettings.tagline}</p>
+                                </div>
+                            </div>
+                        ` : `
+                            <h2>${companySettings.name}</h2>
+                            <p style="margin: 5px 0;">${companySettings.tagline}</p>
+                        `}
+                        <p style="font-weight: bold;">Detail Transaksi Harian</p>
+                        <div style="font-size: 10px; margin-top: 10px; white-space: pre-line;">${companySettings.address}</div>
                     </div>
                     <div class="detail"><strong>ID Transaksi:</strong> ${transaction.invoiceNumber}</div>
                     <div class="detail"><strong>Tanggal:</strong> ${transaction.date}</div>
@@ -4087,8 +4643,20 @@
                 </head>
                 <body>
                     <div class="header">
-                        <h2>FP DIGITAL PRINTING</h2>
-                        <p>TAGIHAN / INVOICE</p>
+                        ${companySettings.logo && companySettings.logo !== 'default' ? `
+                            <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
+                                <img src="${companySettings.logo}" alt="Logo" style="max-width: 60px; max-height: 60px; margin-right: 15px;">
+                                <div>
+                                    <h2>${companySettings.name}</h2>
+                                    <p style="margin: 0; font-size: 12px; color: #666;">${companySettings.tagline}</p>
+                                </div>
+                            </div>
+                        ` : `
+                            <h2>${companySettings.name}</h2>
+                            <p style="margin: 5px 0; font-size: 12px; color: #666;">${companySettings.tagline}</p>
+                        `}
+                        <p style="font-size: 16px; font-weight: bold; margin: 10px 0;">TAGIHAN / INVOICE</p>
+                        <div style="font-size: 10px; color: #666; white-space: pre-line; margin-top: 10px;">${companySettings.address}</div>
                     </div>
                     
                     <div class="invoice-info">
@@ -4546,5 +5114,5 @@
             return texts[type] || type;
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'977384c5c4c8cec2',t:'MTc1NjU0ODgzOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9773ccdd8711cec2',t:'MTc1NjU1MTc5Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
