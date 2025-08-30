@@ -1,7 +1,6 @@
-function showTime() {
-	document.getElementById('currentTime').innerHTML = new Date().toUTCString();
+body{
+  padding: 25px;
 }
-showTime();
-setInterval(function () {
-	showTime();
-}, 1000);
+.title {
+	color: #5C6AC4;
+}
