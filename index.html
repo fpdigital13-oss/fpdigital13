@@ -1671,7 +1671,7 @@ Email: info@fpdigitalprinting.com</div>
                     const confirmation = prompt('Ketik "RESET" (huruf besar) untuk mengkonfirmasi penghapusan semua data:');
                     
                     if (confirmation === 'RESET') {
-                        // Clear localStorage
+                        // Only clear business data, keep login session if active
                         localStorage.removeItem('fpDigitalPrintingData');
                         localStorage.removeItem('companySettings');
                         
@@ -1695,6 +1695,7 @@ Email: info@fpdigitalprinting.com</div>
                         
                         // Save default data
                         saveAllData();
+                        localStorage.setItem('companySettings', JSON.stringify(companySettings));
                         
                         // Refresh all displays
                         updateDashboardStats();
@@ -1709,8 +1710,9 @@ Email: info@fpdigitalprinting.com</div>
                         updateDeliveryStats();
                         loadCompanySettings();
                         updateSidebarLogo();
+                        updateLoginPageLogo();
                         
-                        alert('✅ RESET BERHASIL!\n\nSemua data telah dikembalikan ke pengaturan awal.\nSistem siap digunakan dengan data default.');
+                        alert('✅ RESET BERHASIL!\n\nSemua data telah dikembalikan ke pengaturan awal.\nSistem siap digunakan dengan data default.\nSession login tetap aktif.');
                     } else {
                         alert('❌ Reset dibatalkan.\n\nKonfirmasi tidak sesuai. Data Anda tetap aman.');
                     }
@@ -2380,6 +2382,59 @@ Email: info@fpdigitalprinting.com</div>
             alert(`✅ Jenis cetakan "${name}" berhasil ${action}!\n\nHarga Harian: Rp ${parseInt(dailyPrice).toLocaleString('id-ID')}\nHarga Tagihan: Rp ${parseInt(billingPrice).toLocaleString('id-ID')}\nSatuan: ${unit}`);
         }
 
+        function editPrice(type) {
+            if (!printPrices[type]) {
+                alert('❌ Jenis cetakan tidak ditemukan!');
+                return;
+            }
+            
+            const priceData = printPrices[type];
+            
+            if (confirm(`🔄 EDIT HARGA CETAKAN\n\nJenis: ${type}\nSatuan: ${priceData.unit}\nHarga Harian: Rp ${priceData.dailyPrice.toLocaleString('id-ID')}\nHarga Tagihan: Rp ${priceData.billingPrice.toLocaleString('id-ID')}\n\nApakah Anda ingin mengedit harga cetakan ini?`)) {
+                openPriceModal(type);
+            }
+        }
+
+        function deletePrice(type) {
+            if (!printPrices[type]) {
+                alert('❌ Jenis cetakan tidak ditemukan!');
+                return;
+            }
+            
+            const priceData = printPrices[type];
+            
+            // Check if this print type is used in any transactions or invoices
+            const usedInTransactions = transactions.some(t => t.service === type);
+            const usedInInvoices = invoices.some(inv => inv.items.some(item => item.description === type));
+            
+            let warningMessage = `🗑️ HAPUS JENIS CETAKAN\n\nJenis: ${type}\nSatuan: ${priceData.unit}\nHarga Harian: Rp ${priceData.dailyPrice.toLocaleString('id-ID')}\nHarga Tagihan: Rp ${priceData.billingPrice.toLocaleString('id-ID')}`;
+            
+            if (usedInTransactions || usedInInvoices) {
+                warningMessage += `\n\n⚠️ PERINGATAN PENTING!\nJenis cetakan ini sudah digunakan dalam:`;
+                if (usedInTransactions) warningMessage += `\n• Transaksi harian`;
+                if (usedInInvoices) warningMessage += `\n• Tagihan`;
+                warningMessage += `\n\nData transaksi/tagihan yang sudah ada tidak akan terpengaruh, tetapi Anda tidak bisa membuat transaksi baru dengan jenis cetakan ini.`;
+            }
+            
+            warningMessage += `\n\n❓ Apakah Anda yakin ingin menghapus jenis cetakan "${type}"?`;
+            
+            if (confirm(warningMessage)) {
+                // Remove from printPrices
+                delete printPrices[type];
+                
+                // Save changes
+                saveAllData();
+                
+                // Refresh displays
+                renderPriceCards();
+                
+                // Update dropdowns in forms
+                populateTransactionServiceDropdown();
+                
+                alert(`✅ Jenis cetakan "${type}" berhasil dihapus!\n\n${usedInTransactions || usedInInvoices ? '📝 Catatan: Data transaksi dan tagihan yang sudah ada tetap tersimpan.' : '🗑️ Jenis cetakan telah dihapus sepenuhnya dari sistem.'}`);
+            }
+        }
+
         // Dashboard Stats
         function updateDashboardStats() {
             const totalSales = transactions.reduce((sum, t) => sum + t.total, 0);
@@ -2654,8 +2709,9 @@ Email: info@fpdigitalprinting.com</div>
             
             updateCompanyPreview();
             updateSidebarLogo();
+            updateLoginPageLogo();
             
-            alert(`✅ Pengaturan perusahaan berhasil disimpan!\n\n🏢 ${name}\n🎯 ${tagline}\n📍 ${address.split('\n')[0]}\n\nPerubahan akan diterapkan ke semua dokumen baru.`);
+            alert(`✅ Pengaturan perusahaan berhasil disimpan!\n\n🏢 ${name}\n🎯 ${tagline}\n📍 ${address.split('\n')[0]}\n\nPerubahan akan diterapkan ke semua dokumen dan halaman login.`);
         }
 
         function resetCompanySettings() {
@@ -2667,16 +2723,17 @@ Email: info@fpdigitalprinting.com</div>
                     logo: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiByeD0iMjAiIGZpbGw9InVybCgjZ3JhZGllbnQwX2xpbmVhcl8xXzEpIi8+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWRpZW50MF9saW5lYXJfMV8xIiB4MT0iMCIgeTE9IjAiIHgyPSIxMDAiIHkyPSIxMDAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iIzY2N0VFQSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM3NjRCQTIiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8dGV4dCB4PSI1MCIgeT0iNjAiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0MCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5GUDwvdGV4dD4KPC9zdmc+'
                 };
                 
-                // Clear localStorage
-                localStorage.removeItem('companySettings');
+                // Save to localStorage
+                localStorage.setItem('companySettings', JSON.stringify(companySettings));
                 
                 // Clear file input
                 document.getElementById('company-logo-file').value = '';
                 
                 loadCompanySettings();
                 updateSidebarLogo();
+                updateLoginPageLogo();
                 
-                alert('✅ Pengaturan berhasil direset ke default!\n\nSemua perubahan telah dikembalikan ke pengaturan awal.');
+                alert('✅ Pengaturan berhasil direset ke default!\n\nSemua perubahan telah dikembalikan ke pengaturan awal dan disinkronkan ke seluruh sistem.');
             }
         }
 
@@ -2695,6 +2752,27 @@ Email: info@fpdigitalprinting.com</div>
                 // Could be enhanced to show actual logo in future
                 const initials = companySettings.name.split(' ').map(word => word.charAt(0)).join('').substring(0, 2);
                 sidebarLogo.querySelector('span').textContent = initials;
+            }
+        }
+
+        function updateLoginPageLogo() {
+            // Update login page logo and company name
+            const loginLogo = document.querySelector('#login-page .w-20.h-20');
+            const loginTitle = document.querySelector('#login-page h2');
+            const loginSubtitle = document.querySelector('#login-page p');
+            
+            if (loginTitle) loginTitle.textContent = 'Selamat Datang';
+            if (loginSubtitle) loginSubtitle.textContent = `Masuk ke sistem ${companySettings.name}`;
+            
+            if (loginLogo) {
+                if (companySettings.logo && companySettings.logo !== 'default') {
+                    // Replace with custom logo
+                    loginLogo.innerHTML = `<img src="${companySettings.logo}" alt="Logo" class="w-full h-full object-contain rounded-2xl">`;
+                } else {
+                    // Use default gradient logo with initials
+                    const initials = companySettings.name.split(' ').map(word => word.charAt(0)).join('').substring(0, 2);
+                    loginLogo.innerHTML = `<span class="text-white font-bold text-2xl">${initials}</span>`;
+                }
             }
         }
 
@@ -2753,14 +2831,21 @@ Email: info@fpdigitalprinting.com</div>
             const userRole = localStorage.getItem('userRole') || 'user';
             const roleText = userRole === 'admin' ? 'Administrator' : 'User';
             
-            if (confirm(`🚪 KONFIRMASI LOGOUT\n\n👤 User: ${currentUser}\n🎭 Role: ${roleText}\n\n❓ Apakah Anda yakin ingin keluar dari sistem?\n\nAnda akan kembali ke halaman login dan semua session akan dihapus.`)) {
-                // Clear all login data completely
-                localStorage.clear();
-                sessionStorage.clear();
+            if (confirm(`🚪 KONFIRMASI LOGOUT\n\n👤 User: ${currentUser}\n🎭 Role: ${roleText}\n\n❓ Apakah Anda yakin ingin keluar dari sistem?\n\nSemua data akan disimpan dan Anda akan kembali ke halaman login.`)) {
+                // Save all current data before logout
+                saveAllData();
+                
+                // Only clear login-related data, keep business data
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('currentUser');
+                localStorage.removeItem('userRole');
                 
                 // Show login page and hide main app
                 document.getElementById('main-app').classList.add('hidden');
                 document.getElementById('login-page').classList.remove('hidden');
+                
+                // Update login page logo
+                updateLoginPageLogo();
                 
                 // Reset all tabs to visible (for next login)
                 const allTabs = ['dashboard', 'transaksi-harian', 'tagihan', 'surat-jalan', 'laporan', 'pelanggan', 'harga'];
@@ -2799,7 +2884,7 @@ Email: info@fpdigitalprinting.com</div>
                 document.getElementById('user-display-name').textContent = 'Admin FP Digital';
                 
                 // Close any open modals
-                const modals = ['customer-modal', 'invoice-modal', 'price-modal'];
+                const modals = ['customer-modal', 'invoice-modal', 'price-modal', 'daily-transaction-modal', 'quick-customer-modal', 'delivery-modal'];
                 modals.forEach(modalId => {
                     const modal = document.getElementById(modalId);
                     if (modal) {
@@ -2809,7 +2894,7 @@ Email: info@fpdigitalprinting.com</div>
                 });
                 
                 // Show success message
-                alert(`✅ LOGOUT BERHASIL!\n\n👤 ${currentUser} (${roleText}) telah keluar dari sistem dengan aman.\n\n🔒 Semua data session telah dibersihkan.\n🔑 Silakan login kembali untuk mengakses sistem.\n\n📱 Terima kasih telah menggunakan FP Digital Printing!`);
+                alert(`✅ LOGOUT BERHASIL!\n\n👤 ${currentUser} (${roleText}) telah keluar dari sistem dengan aman.\n\n💾 Semua data telah disimpan otomatis.\n🔑 Silakan login kembali untuk mengakses sistem.\n\n📱 Terima kasih telah menggunakan FP Digital Printing!`);
             }
         }
 
@@ -2957,6 +3042,9 @@ Email: info@fpdigitalprinting.com</div>
                 renderDailyTransactions();
                 renderDeliveries();
                 updateDeliveryStats();
+            } else {
+                // User is not logged in, update login page logo
+                updateLoginPageLogo();
             }
         });
 
@@ -5114,5 +5202,5 @@ Email: info@fpdigitalprinting.com</div>
             return texts[type] || type;
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9773ccdd8711cec2',t:'MTc1NjU1MTc5Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9773e8b89303cec2',t:'MTc1NjU1MjkzMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
