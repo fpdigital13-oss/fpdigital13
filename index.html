@@ -524,6 +524,7 @@
                                         <th class="text-left py-3 px-4 font-semibold text-gray-700">Layanan</th>
                                         <th class="text-left py-3 px-4 font-semibold text-gray-700">Total</th>
                                         <th class="text-left py-3 px-4 font-semibold text-gray-700">Status</th>
+                                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody id="daily-transactions-table">
@@ -951,6 +952,227 @@
         </div>
     </div>
 
+    <!-- Daily Transaction Modal -->
+    <div id="daily-transaction-modal" class="fixed inset-0 modal-backdrop hidden items-center justify-center z-50">
+        <div class="modal-content rounded-2xl p-0 max-w-2xl w-full mx-4 max-h-[90vh] overflow-hidden shadow-xl">
+            <!-- Header -->
+            <div class="bg-white px-6 py-4 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xl font-semibold text-gray-900">Buat Transaksi Harian</h3>
+                    <button onclick="closeDailyTransactionModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="max-h-[calc(90vh-140px)] overflow-y-auto">
+                <form id="daily-transaction-form" class="p-6 space-y-6">
+                    <!-- Basic Info -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">ID Transaksi</label>
+                            <input type="text" id="transaction-id" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 font-mono text-sm" readonly>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal & Waktu</label>
+                            <input type="datetime-local" id="transaction-datetime" class="w-full px-3 py-2 border border-gray-300 rounded-lg input-focus" required>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Pelanggan</label>
+                            <div class="flex space-x-2">
+                                <select id="transaction-customer" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg input-focus" required>
+                                    <option value="">Pilih Pelanggan</option>
+                                </select>
+                                <button type="button" onclick="openQuickCustomerAdd()" class="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-sm font-medium">
+                                    + Baru
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Service Selection -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-medium text-gray-900 mb-4">Detail Layanan</h4>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Jenis Cetakan</label>
+                                <select id="transaction-service" class="w-full px-3 py-2 border border-gray-300 rounded-lg input-focus" onchange="updateTransactionPrice()" required>
+                                    <option value="">Pilih Jenis Cetakan</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Jumlah</label>
+                                <input type="number" id="transaction-quantity" class="w-full px-3 py-2 border border-gray-300 rounded-lg input-focus" min="1" value="1" onchange="calculateTransactionTotal()" required>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Harga Satuan</label>
+                                <input type="number" id="transaction-price" class="w-full px-3 py-2 border border-gray-300 rounded-lg input-focus" min="0" onchange="calculateTransactionTotal()" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Total Harga</label>
+                                <input type="number" id="transaction-total" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 font-semibold text-blue-600" readonly>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Deskripsi (Opsional)</label>
+                            <textarea id="transaction-description" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg input-focus resize-none" placeholder="Contoh: Banner promosi ukuran 2x3m, warna biru"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Payment Status -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h4 class="font-medium text-gray-900 mb-3">Status Pembayaran</h4>
+                        <div class="flex space-x-4">
+                            <label class="flex items-center">
+                                <input type="radio" name="payment-status" value="Lunas" class="mr-2" checked>
+                                <span class="text-sm text-gray-700">💰 Lunas</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="payment-status" value="Belum Lunas" class="mr-2">
+                                <span class="text-sm text-gray-700">⏳ Belum Lunas</span>
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Footer -->
+            <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
+                <button type="button" onclick="closeDailyTransactionModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors">
+                    Batal
+                </button>
+                <button type="submit" form="daily-transaction-form" class="btn-primary text-white px-6 py-2 rounded-lg font-medium">
+                    Buat Transaksi
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Customer Add Modal -->
+    <div id="quick-customer-modal" class="fixed inset-0 modal-backdrop hidden items-center justify-center z-50">
+        <div class="modal-content rounded-2xl p-6 max-w-md w-full mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-gray-900">Tambah Pelanggan Cepat</h3>
+                <button onclick="closeQuickCustomerModal()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <form id="quick-customer-form" class="space-y-3">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+                    <input type="text" id="quick-customer-name" class="w-full px-3 py-2 border border-gray-300 rounded-lg input-focus" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nomor Telepon</label>
+                    <input type="tel" id="quick-customer-phone" class="w-full px-3 py-2 border border-gray-300 rounded-lg input-focus" required>
+                </div>
+                
+                <div class="flex space-x-3 pt-3">
+                    <button type="button" onclick="closeQuickCustomerModal()" class="flex-1 px-3 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm">
+                        Batal
+                    </button>
+                    <button type="submit" class="flex-1 btn-primary text-white py-2 rounded-lg font-medium text-sm">
+                        Tambah
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delivery Modal -->
+    <div id="delivery-modal" class="fixed inset-0 modal-backdrop hidden items-center justify-center z-50">
+        <div class="modal-content rounded-2xl p-0 max-w-2xl w-full mx-4 max-h-[90vh] overflow-hidden shadow-xl">
+            <!-- Header -->
+            <div class="bg-white px-6 py-4 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xl font-semibold text-gray-900">Buat Surat Jalan</h3>
+                    <button onclick="closeDeliveryModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="max-h-[calc(90vh-140px)] overflow-y-auto">
+                <form id="delivery-form" class="p-6 space-y-6">
+                    <!-- Basic Info -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">No. Surat Jalan</label>
+                            <input type="text" id="delivery-number" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 font-mono text-sm" readonly>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Kirim</label>
+                            <input type="date" id="delivery-date" class="w-full px-3 py-2 border border-gray-300 rounded-lg input-focus" required>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Berdasarkan Tagihan (Opsional)</label>
+                            <select id="delivery-invoice" class="w-full px-3 py-2 border border-gray-300 rounded-lg input-focus" onchange="loadInvoiceData()">
+                                <option value="">Pilih Tagihan (atau isi manual)</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Pelanggan</label>
+                            <select id="delivery-customer" class="w-full px-3 py-2 border border-gray-300 rounded-lg input-focus" onchange="updateDeliveryAddress()" required>
+                                <option value="">Pilih Pelanggan</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Delivery Address -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Alamat Tujuan</label>
+                        <textarea id="delivery-address" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg input-focus resize-none" placeholder="Masukkan alamat lengkap pengiriman..." required></textarea>
+                    </div>
+
+                    <!-- Items -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="font-medium text-gray-900">Barang yang Dikirim</h4>
+                            <div id="invoice-reference" class="text-sm text-blue-600 hidden">
+                                📋 Dari Tagihan: <span id="selected-invoice-number"></span>
+                            </div>
+                        </div>
+                        <textarea id="delivery-items" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg input-focus resize-none" placeholder="Contoh:&#10;- Banner 2x3m (2 pcs)&#10;- Stiker A4 (100 pcs)&#10;- Brosur A4 (500 pcs)" required></textarea>
+                        <div class="mt-2 text-xs text-gray-500">
+                            💡 Tip: Pilih tagihan di atas untuk otomatis mengisi item dari pesanan
+                        </div>
+                    </div>
+
+                    <!-- Notes -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Catatan Pengiriman (Opsional)</label>
+                        <textarea id="delivery-notes" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg input-focus resize-none" placeholder="Catatan khusus untuk pengiriman..."></textarea>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Footer -->
+            <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
+                <button type="button" onclick="closeDeliveryModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors">
+                    Batal
+                </button>
+                <button type="submit" form="delivery-form" class="btn-primary text-white px-6 py-2 rounded-lg font-medium">
+                    Buat Surat Jalan
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Price Modal -->
     <div id="price-modal" class="fixed inset-0 modal-backdrop hidden items-center justify-center z-50">
         <div class="modal-content rounded-2xl p-8 max-w-md w-full mx-4">
@@ -1121,7 +1343,8 @@
                 address: 'Jl. Merdeka No. 123, Jakarta',
                 items: 'Banner 2x3m (2 pcs)',
                 status: 'Terkirim',
-                notes: 'Pengiriman sesuai jadwal'
+                notes: 'Pengiriman sesuai jadwal',
+                invoiceRef: 'INV-001'
             }
         ];
 
@@ -1150,6 +1373,8 @@
         ];
 
         let invoiceCounter = 2;
+        let transactionCounter = 3;
+        let deliveryCounter = 2;
 
         // Tab Management
         function showTab(tabName) {
@@ -1190,6 +1415,19 @@
             } else if (tabName === 'tagihan') {
                 renderInvoices();
                 updateInvoiceStats();
+                updateDailyTransactionStats();
+                renderDailyTransactions();
+                renderDeliveries();
+                updateDeliveryStats();
+            } else if (tabName === 'transaksi-harian') {
+                updateDailyTransactionStats();
+                renderDailyTransactions();
+                // Set today's date as default
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('daily-date').value = today;
+            } else if (tabName === 'surat-jalan') {
+                renderDeliveries();
+                updateDeliveryStats();
             }
         }
 
@@ -1876,6 +2114,21 @@
             createInvoice();
         });
 
+        document.getElementById('daily-transaction-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            createDailyTransaction();
+        });
+
+        document.getElementById('quick-customer-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            addQuickCustomer();
+        });
+
+        document.getElementById('delivery-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            createDelivery();
+        });
+
         // Login Management
         function togglePassword() {
             const passwordInput = document.getElementById('login-password');
@@ -1972,6 +2225,10 @@
                 }
                 renderInvoices();
                 updateInvoiceStats();
+                updateDailyTransactionStats();
+                renderDailyTransactions();
+                renderDeliveries();
+                updateDeliveryStats();
                 
                 return true;
             }
@@ -2166,6 +2423,10 @@
                 }
                 renderInvoices();
                 updateInvoiceStats();
+                updateDailyTransactionStats();
+                renderDailyTransactions();
+                renderDeliveries();
+                updateDeliveryStats();
             }
         });
 
@@ -2320,6 +2581,9 @@
         }
 
         function createInvoice() {
+            const form = document.getElementById('invoice-form');
+            const editId = form.getAttribute('data-edit-id');
+            
             const invoiceNumber = document.getElementById('invoice-number').value;
             const date = document.getElementById('invoice-date').value;
             const dueDate = document.getElementById('invoice-due-date').value;
@@ -2370,48 +2634,1335 @@
             const tax = subtotal * 0.11;
             const total = subtotal + tax;
             
-            // Create invoice object
-            const newInvoice = {
-                id: invoiceCounter,
-                invoiceNumber: invoiceNumber,
-                date: date,
-                dueDate: dueDate,
-                customer: customer,
-                items: items,
-                subtotal: subtotal,
-                tax: Math.round(tax),
-                total: Math.round(total),
-                status: 'Belum Dibayar',
-                notes: notes
-            };
-            
-            invoices.push(newInvoice);
-            invoiceCounter++;
-            
-            // Update customer transaction count
-            const customerObj = customers.find(c => c.name === customer);
-            if (customerObj) {
-                customerObj.totalTransactions++;
+            if (editId) {
+                // Edit existing invoice
+                const invoice = invoices.find(inv => inv.id === parseInt(editId));
+                if (invoice) {
+                    const oldCustomer = invoice.customer;
+                    
+                    invoice.date = date;
+                    invoice.dueDate = dueDate;
+                    invoice.customer = customer;
+                    invoice.items = items;
+                    invoice.subtotal = subtotal;
+                    invoice.tax = Math.round(tax);
+                    invoice.total = Math.round(total);
+                    invoice.notes = notes;
+                    
+                    // Update customer transaction counts if customer changed
+                    if (oldCustomer !== customer) {
+                        const oldCustomerObj = customers.find(c => c.name === oldCustomer);
+                        const newCustomerObj = customers.find(c => c.name === customer);
+                        
+                        if (oldCustomerObj && oldCustomerObj.totalTransactions > 0) {
+                            oldCustomerObj.totalTransactions--;
+                        }
+                        if (newCustomerObj) {
+                            newCustomerObj.totalTransactions++;
+                        }
+                    }
+                    
+                    alert(`✅ Tagihan berhasil diperbarui!\n\nNo. Tagihan: ${invoiceNumber}\nPelanggan: ${customer}\nTotal: Rp ${Math.round(total).toLocaleString('id-ID')}\nJatuh Tempo: ${dueDate}`);
+                }
+                
+                form.removeAttribute('data-edit-id');
+            } else {
+                // Create new invoice
+                const newInvoice = {
+                    id: invoiceCounter,
+                    invoiceNumber: invoiceNumber,
+                    date: date,
+                    dueDate: dueDate,
+                    customer: customer,
+                    items: items,
+                    subtotal: subtotal,
+                    tax: Math.round(tax),
+                    total: Math.round(total),
+                    status: 'Belum Dibayar',
+                    notes: notes
+                };
+                
+                invoices.push(newInvoice);
+                invoiceCounter++;
+                
+                // Update customer transaction count
+                const customerObj = customers.find(c => c.name === customer);
+                if (customerObj) {
+                    customerObj.totalTransactions++;
+                }
+                
+                alert(`✅ Tagihan berhasil dibuat!\n\nNo. Tagihan: ${invoiceNumber}\nPelanggan: ${customer}\nTotal: Rp ${Math.round(total).toLocaleString('id-ID')}\nJatuh Tempo: ${dueDate}`);
             }
             
             renderInvoices();
             updateInvoiceStats();
             updateDashboardStats();
             closeInvoiceModal();
-            
-            alert(`✅ Tagihan berhasil dibuat!\n\nNo. Tagihan: ${invoiceNumber}\nPelanggan: ${customer}\nTotal: Rp ${Math.round(total).toLocaleString('id-ID')}\nJatuh Tempo: ${dueDate}`);
         }
 
+        // Delivery Management
         function openDeliveryModal() {
-            alert('Fitur surat jalan akan segera hadir!');
+            const modal = document.getElementById('delivery-modal');
+            
+            // Generate delivery number
+            const deliveryNumber = `SJ-${String(deliveryCounter).padStart(3, '0')}`;
+            document.getElementById('delivery-number').value = deliveryNumber;
+            
+            // Set today's date
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('delivery-date').value = today;
+            
+            // Populate dropdowns
+            populateDeliveryCustomerDropdown();
+            populateDeliveryInvoiceDropdown();
+            
+            // Reset form
+            document.getElementById('delivery-form').reset();
+            document.getElementById('delivery-number').value = deliveryNumber;
+            document.getElementById('delivery-date').value = today;
+            document.getElementById('invoice-reference').classList.add('hidden');
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
         }
 
+        function closeDeliveryModal() {
+            document.getElementById('delivery-modal').classList.add('hidden');
+            document.getElementById('delivery-modal').classList.remove('flex');
+            document.getElementById('delivery-form').reset();
+        }
+
+        function populateDeliveryCustomerDropdown() {
+            const select = document.getElementById('delivery-customer');
+            select.innerHTML = '<option value="">Pilih Pelanggan</option>';
+            
+            customers.forEach(customer => {
+                const option = document.createElement('option');
+                option.value = customer.name;
+                option.textContent = `${customer.name} - ${customer.phone}`;
+                option.dataset.address = customer.address;
+                select.appendChild(option);
+            });
+        }
+
+        function populateDeliveryInvoiceDropdown() {
+            const select = document.getElementById('delivery-invoice');
+            select.innerHTML = '<option value="">Pilih Tagihan (atau isi manual)</option>';
+            
+            // Only show unpaid invoices for delivery
+            const availableInvoices = invoices.filter(inv => inv.status === 'Belum Dibayar');
+            
+            availableInvoices.forEach(invoice => {
+                const option = document.createElement('option');
+                option.value = invoice.id;
+                option.textContent = `${invoice.invoiceNumber} - ${invoice.customer} (Rp ${invoice.total.toLocaleString('id-ID')})`;
+                select.appendChild(option);
+            });
+        }
+
+        function updateDeliveryAddress() {
+            const select = document.getElementById('delivery-customer');
+            const addressTextarea = document.getElementById('delivery-address');
+            const selectedOption = select.options[select.selectedIndex];
+            
+            if (selectedOption.value && selectedOption.dataset.address) {
+                addressTextarea.value = selectedOption.dataset.address;
+            } else {
+                addressTextarea.value = '';
+            }
+        }
+
+        function loadInvoiceData() {
+            const invoiceSelect = document.getElementById('delivery-invoice');
+            const selectedInvoiceId = invoiceSelect.value;
+            
+            if (!selectedInvoiceId) {
+                // Clear form if no invoice selected
+                document.getElementById('delivery-customer').value = '';
+                document.getElementById('delivery-address').value = '';
+                document.getElementById('delivery-items').value = '';
+                document.getElementById('invoice-reference').classList.add('hidden');
+                return;
+            }
+            
+            const selectedInvoice = invoices.find(inv => inv.id === parseInt(selectedInvoiceId));
+            if (!selectedInvoice) return;
+            
+            // Auto-fill customer data
+            document.getElementById('delivery-customer').value = selectedInvoice.customer;
+            
+            // Auto-fill address from customer data
+            const customer = customers.find(c => c.name === selectedInvoice.customer);
+            if (customer) {
+                document.getElementById('delivery-address').value = customer.address;
+            }
+            
+            // Auto-fill items from invoice
+            const itemsList = selectedInvoice.items.map(item => {
+                let itemText = `- ${item.description}`;
+                if (item.detail) {
+                    itemText += ` (${item.detail})`;
+                }
+                itemText += ` - ${item.quantity} ${item.unit}`;
+                return itemText;
+            }).join('\n');
+            
+            document.getElementById('delivery-items').value = itemsList;
+            
+            // Show invoice reference
+            document.getElementById('selected-invoice-number').textContent = selectedInvoice.invoiceNumber;
+            document.getElementById('invoice-reference').classList.remove('hidden');
+            
+            alert(`✅ Data tagihan berhasil dimuat!\n\n📋 ${selectedInvoice.invoiceNumber}\n👤 ${selectedInvoice.customer}\n📦 ${selectedInvoice.items.length} item pesanan\n\nSemua field telah diisi otomatis berdasarkan data tagihan.`);
+        }
+
+        function createDelivery() {
+            const form = document.getElementById('delivery-form');
+            const editId = form.getAttribute('data-edit-id');
+            
+            const deliveryNumber = document.getElementById('delivery-number').value;
+            const date = document.getElementById('delivery-date').value;
+            const customer = document.getElementById('delivery-customer').value;
+            const address = document.getElementById('delivery-address').value.trim();
+            const items = document.getElementById('delivery-items').value.trim();
+            const notes = document.getElementById('delivery-notes').value.trim();
+            const invoiceId = document.getElementById('delivery-invoice').value;
+            
+            if (!customer || !address || !items) {
+                alert('Silakan lengkapi semua field yang diperlukan');
+                return;
+            }
+            
+            // Get invoice reference if selected
+            let invoiceRef = null;
+            if (invoiceId) {
+                const selectedInvoice = invoices.find(inv => inv.id === parseInt(invoiceId));
+                if (selectedInvoice) {
+                    invoiceRef = selectedInvoice.invoiceNumber;
+                }
+            }
+            
+            if (editId) {
+                // Edit existing delivery
+                const delivery = deliveries.find(d => d.id === parseInt(editId));
+                if (delivery) {
+                    delivery.date = date;
+                    delivery.customer = customer;
+                    delivery.address = address;
+                    delivery.items = items;
+                    delivery.notes = notes;
+                    delivery.invoiceRef = invoiceRef;
+                    
+                    alert(`✅ Surat jalan berhasil diperbarui!\n\nNo. Surat Jalan: ${deliveryNumber}\nPelanggan: ${customer}\nTanggal Kirim: ${date}\nStatus: ${delivery.status}${invoiceRef ? `\nReferensi: ${invoiceRef}` : ''}`);
+                }
+                
+                form.removeAttribute('data-edit-id');
+            } else {
+                // Create new delivery
+                const newDelivery = {
+                    id: deliveryCounter,
+                    deliveryNumber: deliveryNumber,
+                    date: date,
+                    customer: customer,
+                    address: address,
+                    items: items,
+                    status: 'Menunggu Kirim',
+                    notes: notes,
+                    invoiceRef: invoiceRef
+                };
+                
+                deliveries.push(newDelivery);
+                deliveryCounter++;
+                
+                alert(`✅ Surat jalan berhasil dibuat!\n\nNo. Surat Jalan: ${deliveryNumber}\nPelanggan: ${customer}\nTanggal Kirim: ${date}\nStatus: Menunggu Kirim${invoiceRef ? `\nReferensi: ${invoiceRef}` : ''}`);
+            }
+            
+            // Update displays
+            renderDeliveries();
+            updateDeliveryStats();
+            closeDeliveryModal();
+        }
+
+        function renderDeliveries() {
+            const tbody = document.getElementById('deliveries-table');
+            tbody.innerHTML = '';
+
+            if (deliveries.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="6" class="py-12 px-4 text-center text-gray-500">
+                        <div class="flex flex-col items-center">
+                            <svg class="w-16 h-16 text-gray-300 mb-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"></path>
+                                <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1V8a1 1 0 00-1-1h-3z"></path>
+                            </svg>
+                            <p class="text-lg font-medium text-gray-600 mb-2">Belum ada surat jalan</p>
+                            <p class="text-sm text-gray-500">Klik "Buat Surat Jalan" untuk membuat surat jalan pertama</p>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+                return;
+            }
+
+            deliveries.forEach(delivery => {
+                const row = document.createElement('tr');
+                row.className = 'table-row transition-all duration-300';
+                
+                const statusClass = delivery.status === 'Terkirim' ? 'bg-green-100 text-green-800' : 
+                                   delivery.status === 'Dalam Perjalanan' ? 'bg-blue-100 text-blue-800' : 
+                                   'bg-yellow-100 text-yellow-800';
+                
+                row.innerHTML = `
+                    <td class="py-4 px-4">
+                        <div class="font-mono text-blue-600 font-semibold">${delivery.deliveryNumber}</div>
+                    </td>
+                    <td class="py-4 px-4 text-gray-600">${delivery.date}</td>
+                    <td class="py-4 px-4">
+                        <div class="text-gray-900 font-medium">${delivery.customer}</div>
+                        ${delivery.invoiceRef ? `<div class="text-xs text-blue-600">📋 ${delivery.invoiceRef}</div>` : ''}
+                    </td>
+                    <td class="py-4 px-4">
+                        <div class="text-gray-600 text-sm max-w-xs truncate">${delivery.address}</div>
+                    </td>
+                    <td class="py-4 px-4">
+                        <span class="px-3 py-1 ${statusClass} rounded-full text-sm font-medium">${delivery.status}</span>
+                    </td>
+                    <td class="py-4 px-4">
+                        <div class="flex space-x-2">
+                            <button onclick="viewDelivery(${delivery.id})" class="text-purple-600 hover:text-purple-800 font-medium text-sm px-2 py-1 rounded hover:bg-purple-50 transition-all duration-300" title="Lihat & Print">
+                                👁️
+                            </button>
+                            <button onclick="editDelivery(${delivery.id})" class="text-orange-600 hover:text-orange-800 font-medium text-sm px-2 py-1 rounded hover:bg-orange-50 transition-all duration-300" title="Edit">
+                                ✏️
+                            </button>
+                            <button onclick="updateDeliveryStatus(${delivery.id})" class="text-blue-600 hover:text-blue-800 font-medium text-sm px-2 py-1 rounded hover:bg-blue-50 transition-all duration-300" title="Update Status">
+                                🚚
+                            </button>
+                            <button onclick="deleteDelivery(${delivery.id})" class="text-red-600 hover:text-red-800 font-medium text-sm px-2 py-1 rounded hover:bg-red-50 transition-all duration-300" title="Hapus">
+                                🗑️
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function updateDeliveryStats() {
+            const pendingDeliveries = deliveries.filter(d => d.status === 'Menunggu Kirim').length;
+            const inTransitDeliveries = deliveries.filter(d => d.status === 'Dalam Perjalanan').length;
+            const deliveredDeliveries = deliveries.filter(d => d.status === 'Terkirim').length;
+            const totalDeliveries = deliveries.length;
+            
+            document.getElementById('pending-deliveries').textContent = pendingDeliveries;
+            document.getElementById('in-transit-deliveries').textContent = inTransitDeliveries;
+            document.getElementById('delivered-deliveries').textContent = deliveredDeliveries;
+            document.getElementById('total-deliveries').textContent = totalDeliveries;
+        }
+
+        function viewDelivery(id) {
+            const delivery = deliveries.find(d => d.id === id);
+            if (!delivery) return;
+            
+            const detailText = `🚚 DETAIL SURAT JALAN\n\n📋 ${delivery.deliveryNumber}\n📅 ${delivery.date}\n👤 ${delivery.customer}${delivery.invoiceRef ? `\n🔗 Referensi: ${delivery.invoiceRef}` : ''}\n\n📍 ALAMAT TUJUAN:\n${delivery.address}\n\n📦 BARANG YANG DIKIRIM:\n${delivery.items}\n\n📊 Status: ${delivery.status}${delivery.notes ? `\n\n📝 Catatan: ${delivery.notes}` : ''}`;
+            
+            if (confirm(`${detailText}\n\n🖨️ Apakah Anda ingin mencetak surat jalan ini?`)) {
+                printDelivery(delivery);
+            } else {
+                alert(detailText);
+            }
+        }
+
+        function printDelivery(delivery) {
+            const printWindow = window.open('', '_blank');
+            
+            // Parse items into structured format for table
+            const itemsArray = delivery.items.split('\n').filter(item => item.trim()).map(item => {
+                const cleanItem = item.replace(/^[-•]\s*/, '').trim();
+                const parts = cleanItem.split(' - ');
+                const description = parts[0] || cleanItem;
+                const quantity = parts[1] || '1 pcs';
+                return { description, quantity };
+            });
+            
+            const printContent = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Surat Jalan - ${delivery.deliveryNumber}</title>
+                    <meta charset="UTF-8">
+                    <style>
+                        * {
+                            margin: 0;
+                            padding: 0;
+                            box-sizing: border-box;
+                        }
+                        
+                        body {
+                            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                            line-height: 1.4;
+                            color: #333;
+                            background: #fff;
+                        }
+                        
+                        .container {
+                            max-width: 210mm;
+                            margin: 0 auto;
+                            padding: 20mm;
+                            min-height: 297mm;
+                            position: relative;
+                        }
+                        
+                        /* Header Section */
+                        .header {
+                            text-align: center;
+                            margin-bottom: 30px;
+                            padding-bottom: 20px;
+                            border-bottom: 3px solid #2563eb;
+                            position: relative;
+                        }
+                        
+                        .company-name {
+                            font-size: 28px;
+                            font-weight: bold;
+                            color: #1e40af;
+                            margin-bottom: 5px;
+                            letter-spacing: 1px;
+                        }
+                        
+                        .company-tagline {
+                            font-size: 12px;
+                            color: #6b7280;
+                            margin-bottom: 15px;
+                        }
+                        
+                        .document-title {
+                            font-size: 24px;
+                            font-weight: bold;
+                            color: #374151;
+                            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+                            padding: 12px 30px;
+                            border-radius: 8px;
+                            display: inline-block;
+                            border: 2px solid #d1d5db;
+                        }
+                        
+                        /* Info Grid */
+                        .info-grid {
+                            display: grid;
+                            grid-template-columns: 1fr 1fr;
+                            gap: 30px;
+                            margin-bottom: 30px;
+                        }
+                        
+                        .info-section {
+                            background: #f8fafc;
+                            padding: 20px;
+                            border-radius: 12px;
+                            border: 1px solid #e2e8f0;
+                        }
+                        
+                        .info-title {
+                            font-size: 16px;
+                            font-weight: bold;
+                            color: #1e40af;
+                            margin-bottom: 15px;
+                            padding-bottom: 8px;
+                            border-bottom: 2px solid #3b82f6;
+                        }
+                        
+                        .info-item {
+                            display: flex;
+                            margin-bottom: 8px;
+                            align-items: flex-start;
+                        }
+                        
+                        .info-label {
+                            font-weight: 600;
+                            color: #4b5563;
+                            min-width: 120px;
+                            margin-right: 10px;
+                        }
+                        
+                        .info-value {
+                            color: #111827;
+                            flex: 1;
+                        }
+                        
+                        .status-badge {
+                            display: inline-block;
+                            padding: 4px 12px;
+                            border-radius: 20px;
+                            font-size: 12px;
+                            font-weight: bold;
+                            text-transform: uppercase;
+                        }
+                        
+                        .status-delivered { background: #dcfce7; color: #166534; }
+                        .status-transit { background: #dbeafe; color: #1d4ed8; }
+                        .status-pending { background: #fef3c7; color: #92400e; }
+                        
+                        /* Address Section */
+                        .address-section {
+                            background: #fff;
+                            border: 2px solid #e5e7eb;
+                            border-radius: 12px;
+                            padding: 20px;
+                            margin-bottom: 30px;
+                        }
+                        
+                        .address-title {
+                            font-size: 16px;
+                            font-weight: bold;
+                            color: #1e40af;
+                            margin-bottom: 12px;
+                            display: flex;
+                            align-items: center;
+                        }
+                        
+                        .address-title::before {
+                            content: "📍";
+                            margin-right: 8px;
+                            font-size: 18px;
+                        }
+                        
+                        .address-content {
+                            background: #f9fafb;
+                            padding: 15px;
+                            border-radius: 8px;
+                            border-left: 4px solid #3b82f6;
+                            font-size: 14px;
+                            line-height: 1.6;
+                        }
+                        
+                        /* Items Table */
+                        .items-section {
+                            margin-bottom: 30px;
+                        }
+                        
+                        .items-title {
+                            font-size: 18px;
+                            font-weight: bold;
+                            color: #1e40af;
+                            margin-bottom: 15px;
+                            display: flex;
+                            align-items: center;
+                        }
+                        
+                        .items-title::before {
+                            content: "📦";
+                            margin-right: 10px;
+                            font-size: 20px;
+                        }
+                        
+                        .items-table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            background: #fff;
+                            border-radius: 12px;
+                            overflow: hidden;
+                            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                            border: 1px solid #e5e7eb;
+                        }
+                        
+                        .items-table th {
+                            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+                            color: white;
+                            padding: 15px 20px;
+                            text-align: left;
+                            font-weight: bold;
+                            font-size: 14px;
+                            text-transform: uppercase;
+                            letter-spacing: 0.5px;
+                        }
+                        
+                        .items-table td {
+                            padding: 15px 20px;
+                            border-bottom: 1px solid #f3f4f6;
+                            vertical-align: top;
+                        }
+                        
+                        .items-table tr:nth-child(even) {
+                            background: #f8fafc;
+                        }
+                        
+                        .items-table tr:hover {
+                            background: #f1f5f9;
+                        }
+                        
+                        .item-number {
+                            font-weight: bold;
+                            color: #3b82f6;
+                            text-align: center;
+                            width: 60px;
+                        }
+                        
+                        .item-description {
+                            font-weight: 500;
+                            color: #111827;
+                        }
+                        
+                        .item-quantity {
+                            font-weight: 600;
+                            color: #059669;
+                            text-align: center;
+                            width: 120px;
+                        }
+                        
+                        /* Notes Section */
+                        .notes-section {
+                            background: #fffbeb;
+                            border: 1px solid #f59e0b;
+                            border-radius: 12px;
+                            padding: 20px;
+                            margin-bottom: 40px;
+                        }
+                        
+                        .notes-title {
+                            font-size: 16px;
+                            font-weight: bold;
+                            color: #92400e;
+                            margin-bottom: 10px;
+                            display: flex;
+                            align-items: center;
+                        }
+                        
+                        .notes-title::before {
+                            content: "📝";
+                            margin-right: 8px;
+                        }
+                        
+                        .notes-content {
+                            color: #78350f;
+                            line-height: 1.6;
+                        }
+                        
+                        /* Signature Section */
+                        .signature-section {
+                            display: grid;
+                            grid-template-columns: 1fr 1fr;
+                            gap: 40px;
+                            margin-top: 50px;
+                        }
+                        
+                        .signature-box {
+                            text-align: center;
+                            background: #f8fafc;
+                            border: 2px solid #e2e8f0;
+                            border-radius: 12px;
+                            padding: 25px;
+                        }
+                        
+                        .signature-title {
+                            font-weight: bold;
+                            color: #374151;
+                            margin-bottom: 15px;
+                            font-size: 14px;
+                            text-transform: uppercase;
+                            letter-spacing: 0.5px;
+                        }
+                        
+                        .signature-line {
+                            height: 80px;
+                            border-bottom: 2px solid #6b7280;
+                            margin-bottom: 15px;
+                            position: relative;
+                        }
+                        
+                        .signature-date {
+                            font-size: 12px;
+                            color: #6b7280;
+                            margin-bottom: 10px;
+                        }
+                        
+                        .signature-name {
+                            font-weight: 600;
+                            color: #111827;
+                        }
+                        
+                        /* Footer */
+                        .footer {
+                            position: absolute;
+                            bottom: 20mm;
+                            left: 20mm;
+                            right: 20mm;
+                            text-align: center;
+                            padding-top: 20px;
+                            border-top: 1px solid #e5e7eb;
+                            font-size: 11px;
+                            color: #6b7280;
+                        }
+                        
+                        /* Print Styles */
+                        @media print {
+                            body {
+                                margin: 0;
+                                padding: 0;
+                                background: white !important;
+                                -webkit-print-color-adjust: exact;
+                                color-adjust: exact;
+                            }
+                            
+                            .container {
+                                margin: 0;
+                                padding: 15mm;
+                                box-shadow: none;
+                            }
+                            
+                            .items-table th {
+                                background: #3b82f6 !important;
+                                color: white !important;
+                            }
+                            
+                            .signature-section {
+                                page-break-inside: avoid;
+                            }
+                            
+                            .footer {
+                                position: fixed;
+                                bottom: 10mm;
+                            }
+                        }
+                        
+                        @page {
+                            size: A4;
+                            margin: 0;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <!-- Header -->
+                        <div class="header">
+                            <div class="company-name">FP DIGITAL PRINTING</div>
+                            <div class="company-tagline">Professional Printing Services</div>
+                            <div class="document-title">SURAT JALAN</div>
+                        </div>
+                        
+                        <!-- Info Grid -->
+                        <div class="info-grid">
+                            <div class="info-section">
+                                <div class="info-title">📋 Informasi Surat Jalan</div>
+                                <div class="info-item">
+                                    <span class="info-label">No. Surat Jalan:</span>
+                                    <span class="info-value"><strong>${delivery.deliveryNumber}</strong></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Tanggal Kirim:</span>
+                                    <span class="info-value">${new Date(delivery.date).toLocaleDateString('id-ID', { 
+                                        weekday: 'long', 
+                                        year: 'numeric', 
+                                        month: 'long', 
+                                        day: 'numeric' 
+                                    })}</span>
+                                </div>
+                                ${delivery.invoiceRef ? `
+                                <div class="info-item">
+                                    <span class="info-label">Ref. Tagihan:</span>
+                                    <span class="info-value"><strong>${delivery.invoiceRef}</strong></span>
+                                </div>
+                                ` : ''}
+                                <div class="info-item">
+                                    <span class="info-label">Status:</span>
+                                    <span class="info-value">
+                                        <span class="status-badge ${delivery.status === 'Terkirim' ? 'status-delivered' : 
+                                                                   delivery.status === 'Dalam Perjalanan' ? 'status-transit' : 
+                                                                   'status-pending'}">
+                                            ${delivery.status}
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="info-section">
+                                <div class="info-title">👤 Informasi Penerima</div>
+                                <div class="info-item">
+                                    <span class="info-label">Nama:</span>
+                                    <span class="info-value"><strong>${delivery.customer}</strong></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Waktu Cetak:</span>
+                                    <span class="info-value">${new Date().toLocaleString('id-ID')}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Address Section -->
+                        <div class="address-section">
+                            <div class="address-title">Alamat Tujuan Pengiriman</div>
+                            <div class="address-content">${delivery.address}</div>
+                        </div>
+                        
+                        <!-- Items Table -->
+                        <div class="items-section">
+                            <div class="items-title">Daftar Barang yang Dikirim</div>
+                            <table class="items-table">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Deskripsi Barang</th>
+                                        <th>Jumlah</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${itemsArray.map((item, index) => `
+                                        <tr>
+                                            <td class="item-number">${index + 1}</td>
+                                            <td class="item-description">${item.description}</td>
+                                            <td class="item-quantity">${item.quantity}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        ${delivery.notes ? `
+                        <!-- Notes Section -->
+                        <div class="notes-section">
+                            <div class="notes-title">Catatan Khusus</div>
+                            <div class="notes-content">${delivery.notes}</div>
+                        </div>
+                        ` : ''}
+                        
+                        <!-- Signature Section -->
+                        <div class="signature-section">
+                            <div class="signature-box">
+                                <div class="signature-title">Pengirim</div>
+                                <div class="signature-date">Tanggal: ${new Date().toLocaleDateString('id-ID')}</div>
+                                <div class="signature-line"></div>
+                                <div class="signature-name">FP Digital Printing</div>
+                            </div>
+                            
+                            <div class="signature-box">
+                                <div class="signature-title">Penerima</div>
+                                <div class="signature-date">Tanggal: _______________</div>
+                                <div class="signature-line"></div>
+                                <div class="signature-name">${delivery.customer}</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Footer -->
+                        <div class="footer">
+                            <div>Dokumen ini dicetak secara otomatis pada ${new Date().toLocaleString('id-ID')}</div>
+                            <div>FP Digital Printing - Professional Printing Services</div>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `;
+            
+            printWindow.document.write(printContent);
+            printWindow.document.close();
+            printWindow.focus();
+            
+            // Auto print after content loads
+            printWindow.onload = function() {
+                setTimeout(() => {
+                    printWindow.print();
+                }, 500);
+            };
+        }
+
+        function editDelivery(id) {
+            const delivery = deliveries.find(d => d.id === id);
+            if (!delivery) return;
+            
+            if (confirm(`🔄 EDIT SURAT JALAN\n\nNo: ${delivery.deliveryNumber}\nPelanggan: ${delivery.customer}\nTanggal: ${delivery.date}\nStatus: ${delivery.status}${delivery.invoiceRef ? `\nReferensi: ${delivery.invoiceRef}` : ''}\n\nApakah Anda ingin mengedit surat jalan ini?`)) {
+                // Open edit modal with pre-filled data
+                openDeliveryModal();
+                
+                // Fill the form with existing data
+                document.getElementById('delivery-number').value = delivery.deliveryNumber;
+                document.getElementById('delivery-date').value = delivery.date;
+                document.getElementById('delivery-customer').value = delivery.customer;
+                document.getElementById('delivery-address').value = delivery.address;
+                document.getElementById('delivery-items').value = delivery.items;
+                document.getElementById('delivery-notes').value = delivery.notes || '';
+                
+                // Set invoice reference if exists
+                if (delivery.invoiceRef) {
+                    const invoice = invoices.find(inv => inv.invoiceNumber === delivery.invoiceRef);
+                    if (invoice) {
+                        document.getElementById('delivery-invoice').value = invoice.id;
+                        document.getElementById('selected-invoice-number').textContent = delivery.invoiceRef;
+                        document.getElementById('invoice-reference').classList.remove('hidden');
+                    }
+                }
+                
+                // Mark form as edit mode
+                document.getElementById('delivery-form').setAttribute('data-edit-id', id);
+            }
+        }
+
+        function updateDeliveryStatus(id) {
+            const delivery = deliveries.find(d => d.id === id);
+            if (!delivery) return;
+            
+            const statusOptions = ['Menunggu Kirim', 'Dalam Perjalanan', 'Terkirim'];
+            const currentIndex = statusOptions.indexOf(delivery.status);
+            const nextStatus = statusOptions[(currentIndex + 1) % statusOptions.length];
+            
+            if (confirm(`🚚 UPDATE STATUS PENGIRIMAN\n\nNo: ${delivery.deliveryNumber}\nPelanggan: ${delivery.customer}\nStatus Saat Ini: ${delivery.status}\n\nApakah Anda ingin mengubah status menjadi "${nextStatus}"?`)) {
+                delivery.status = nextStatus;
+                
+                renderDeliveries();
+                updateDeliveryStats();
+                
+                let statusIcon = nextStatus === 'Terkirim' ? '✅' : nextStatus === 'Dalam Perjalanan' ? '🚛' : '⏳';
+                alert(`${statusIcon} Status pengiriman berhasil diperbarui!\n\nNo: ${delivery.deliveryNumber}\nStatus Baru: ${nextStatus}\nPelanggan: ${delivery.customer}`);
+            }
+        }
+
+        function deleteDelivery(id) {
+            const delivery = deliveries.find(d => d.id === id);
+            if (!delivery) return;
+            
+            if (confirm(`🗑️ HAPUS SURAT JALAN\n\nNo: ${delivery.deliveryNumber}\nPelanggan: ${delivery.customer}\nTanggal: ${delivery.date}\nStatus: ${delivery.status}\n\n⚠️ PERINGATAN: Data yang dihapus tidak dapat dikembalikan!\n\nApakah Anda yakin ingin menghapus surat jalan ini?`)) {
+                // Remove from deliveries array
+                deliveries = deliveries.filter(d => d.id !== id);
+                
+                // Refresh displays
+                renderDeliveries();
+                updateDeliveryStats();
+                
+                alert(`✅ Surat jalan ${delivery.deliveryNumber} berhasil dihapus!`);
+            }
+        }
+
+        // Daily Transaction Management
         function openDailyTransactionModal() {
-            alert('Fitur transaksi harian akan segera hadir!');
+            const modal = document.getElementById('daily-transaction-modal');
+            
+            // Generate transaction ID
+            const transactionId = `TXN-${String(transactionCounter).padStart(3, '0')}`;
+            document.getElementById('transaction-id').value = transactionId;
+            
+            // Set current datetime
+            const now = new Date();
+            const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+            document.getElementById('transaction-datetime').value = localDateTime;
+            
+            // Populate dropdowns
+            populateTransactionCustomerDropdown();
+            populateTransactionServiceDropdown();
+            
+            // Reset form
+            document.getElementById('daily-transaction-form').reset();
+            document.getElementById('transaction-id').value = transactionId;
+            document.getElementById('transaction-datetime').value = localDateTime;
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeDailyTransactionModal() {
+            document.getElementById('daily-transaction-modal').classList.add('hidden');
+            document.getElementById('daily-transaction-modal').classList.remove('flex');
+            document.getElementById('daily-transaction-form').reset();
+        }
+
+        function populateTransactionCustomerDropdown() {
+            const select = document.getElementById('transaction-customer');
+            select.innerHTML = '<option value="">Pilih Pelanggan</option>';
+            
+            customers.forEach(customer => {
+                const option = document.createElement('option');
+                option.value = customer.name;
+                option.textContent = `${customer.name} - ${customer.phone}`;
+                select.appendChild(option);
+            });
+        }
+
+        function populateTransactionServiceDropdown() {
+            const select = document.getElementById('transaction-service');
+            select.innerHTML = '<option value="">Pilih Jenis Cetakan</option>';
+            
+            Object.entries(printPrices).forEach(([type, priceData]) => {
+                const option = document.createElement('option');
+                option.value = type;
+                option.textContent = `${type} (${priceData.unit})`;
+                option.dataset.price = priceData.dailyPrice;
+                option.dataset.unit = priceData.unit;
+                select.appendChild(option);
+            });
+        }
+
+        function updateTransactionPrice() {
+            const select = document.getElementById('transaction-service');
+            const priceInput = document.getElementById('transaction-price');
+            const selectedOption = select.options[select.selectedIndex];
+            
+            if (selectedOption.value) {
+                priceInput.value = selectedOption.dataset.price;
+                calculateTransactionTotal();
+            } else {
+                priceInput.value = '';
+                document.getElementById('transaction-total').value = '';
+            }
+        }
+
+        function calculateTransactionTotal() {
+            const quantity = parseFloat(document.getElementById('transaction-quantity').value) || 0;
+            const price = parseFloat(document.getElementById('transaction-price').value) || 0;
+            const total = quantity * price;
+            
+            document.getElementById('transaction-total').value = total;
+        }
+
+        function createDailyTransaction() {
+            const form = document.getElementById('daily-transaction-form');
+            const editId = form.getAttribute('data-edit-id');
+            
+            const transactionId = document.getElementById('transaction-id').value;
+            const datetime = document.getElementById('transaction-datetime').value;
+            const customer = document.getElementById('transaction-customer').value;
+            const service = document.getElementById('transaction-service').value;
+            const quantity = parseFloat(document.getElementById('transaction-quantity').value);
+            const price = parseFloat(document.getElementById('transaction-price').value);
+            const total = parseFloat(document.getElementById('transaction-total').value);
+            const description = document.getElementById('transaction-description').value;
+            const paymentStatus = document.querySelector('input[name="payment-status"]:checked').value;
+            
+            if (!customer || !service || !quantity || !price) {
+                alert('Silakan lengkapi semua field yang diperlukan');
+                return;
+            }
+            
+            // Parse datetime
+            const date = datetime.split('T')[0];
+            const time = datetime.split('T')[1];
+            
+            if (editId) {
+                // Edit existing transaction
+                const transaction = transactions.find(t => t.id === parseInt(editId));
+                if (transaction) {
+                    const oldCustomer = transaction.customer;
+                    
+                    transaction.date = date;
+                    transaction.time = time;
+                    transaction.customer = customer;
+                    transaction.service = service;
+                    transaction.quantity = quantity;
+                    transaction.total = total;
+                    transaction.status = paymentStatus === 'Lunas' ? 'Selesai' : 'Proses';
+                    transaction.description = description || `${service} (${quantity} unit)`;
+                    
+                    // Update customer transaction counts if customer changed
+                    if (oldCustomer !== customer) {
+                        const oldCustomerObj = customers.find(c => c.name === oldCustomer);
+                        const newCustomerObj = customers.find(c => c.name === customer);
+                        
+                        if (oldCustomerObj && oldCustomerObj.totalTransactions > 0) {
+                            oldCustomerObj.totalTransactions--;
+                        }
+                        if (newCustomerObj) {
+                            newCustomerObj.totalTransactions++;
+                        }
+                    }
+                    
+                    alert(`✅ Transaksi berhasil diperbarui!\n\nID: ${transactionId}\nPelanggan: ${customer}\nLayanan: ${service}\nTotal: Rp ${total.toLocaleString('id-ID')}\nStatus: ${paymentStatus}`);
+                }
+                
+                form.removeAttribute('data-edit-id');
+            } else {
+                // Create new transaction
+                const newTransaction = {
+                    id: transactionCounter,
+                    invoiceNumber: transactionId,
+                    date: date,
+                    time: time,
+                    customer: customer,
+                    service: service,
+                    quantity: quantity,
+                    total: total,
+                    status: paymentStatus === 'Lunas' ? 'Selesai' : 'Proses',
+                    description: description || `${service} (${quantity} unit)`,
+                    type: 'daily'
+                };
+                
+                transactions.push(newTransaction);
+                transactionCounter++;
+                
+                // Update customer transaction count
+                const customerObj = customers.find(c => c.name === customer);
+                if (customerObj) {
+                    customerObj.totalTransactions++;
+                }
+                
+                alert(`✅ Transaksi berhasil dibuat!\n\nID: ${transactionId}\nPelanggan: ${customer}\nLayanan: ${service}\nTotal: Rp ${total.toLocaleString('id-ID')}\nStatus: ${paymentStatus}`);
+            }
+            
+            // Update displays
+            updateDashboardStats();
+            updateDailyTransactionStats();
+            renderDailyTransactions();
+            closeDailyTransactionModal();
+        }
+
+        // Quick Customer Add
+        function openQuickCustomerAdd() {
+            document.getElementById('quick-customer-modal').classList.remove('hidden');
+            document.getElementById('quick-customer-modal').classList.add('flex');
+        }
+
+        function closeQuickCustomerModal() {
+            document.getElementById('quick-customer-modal').classList.add('hidden');
+            document.getElementById('quick-customer-modal').classList.remove('flex');
+            document.getElementById('quick-customer-form').reset();
+        }
+
+        function addQuickCustomer() {
+            const name = document.getElementById('quick-customer-name').value.trim();
+            const phone = document.getElementById('quick-customer-phone').value.trim();
+            
+            if (!name || !phone) {
+                alert('Silakan masukkan nama dan nomor telepon');
+                return;
+            }
+            
+            // Check if customer already exists
+            if (customers.find(c => c.name.toLowerCase() === name.toLowerCase() || c.phone === phone)) {
+                alert('Pelanggan dengan nama atau nomor telepon ini sudah ada');
+                return;
+            }
+            
+            // Add new customer
+            const newCustomer = {
+                id: customers.length + 1,
+                name: name,
+                email: `${name.toLowerCase().replace(/\s+/g, '')}@email.com`,
+                phone: phone,
+                address: `Alamat ${name}`,
+                totalTransactions: 0
+            };
+            
+            customers.push(newCustomer);
+            
+            // Update dropdown and select the new customer
+            populateTransactionCustomerDropdown();
+            document.getElementById('transaction-customer').value = name;
+            
+            closeQuickCustomerModal();
+            alert(`✅ Pelanggan "${name}" berhasil ditambahkan!`);
+        }
+
+        // Daily Transaction Stats and Display
+        function updateDailyTransactionStats() {
+            const today = new Date().toISOString().split('T')[0];
+            const todayTransactions = transactions.filter(t => t.date === today);
+            
+            const totalTransactions = todayTransactions.length;
+            const totalRevenue = todayTransactions.reduce((sum, t) => sum + t.total, 0);
+            const averageTransaction = totalTransactions > 0 ? totalRevenue / totalTransactions : 0;
+            
+            document.getElementById('daily-total-transactions').textContent = totalTransactions;
+            document.getElementById('daily-revenue').textContent = `Rp ${totalRevenue.toLocaleString('id-ID')}`;
+            document.getElementById('daily-average').textContent = `Rp ${Math.round(averageTransaction).toLocaleString('id-ID')}`;
+        }
+
+        function renderDailyTransactions() {
+            const tbody = document.getElementById('daily-transactions-table');
+            tbody.innerHTML = '';
+            
+            // Get selected date or today
+            const selectedDate = document.getElementById('daily-date').value || new Date().toISOString().split('T')[0];
+            const dayTransactions = transactions.filter(t => t.date === selectedDate);
+            
+            if (dayTransactions.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="7" class="py-8 px-4 text-center text-gray-500">
+                        <p>Tidak ada transaksi pada tanggal ${selectedDate}</p>
+                    </td>
+                `;
+                tbody.appendChild(row);
+                return;
+            }
+            
+            dayTransactions.forEach(transaction => {
+                const row = document.createElement('tr');
+                row.className = 'table-row transition-all duration-300';
+                
+                const statusClass = transaction.status === 'Selesai' ? 'bg-green-100 text-green-800' : 
+                                   transaction.status === 'Proses' ? 'bg-yellow-100 text-yellow-800' : 
+                                   'bg-red-100 text-red-800';
+                
+                row.innerHTML = `
+                    <td class="py-3 px-4 text-gray-600 text-sm">${transaction.time}</td>
+                    <td class="py-3 px-4 text-gray-600 font-mono text-sm">${transaction.invoiceNumber}</td>
+                    <td class="py-3 px-4 text-gray-900 font-medium">${transaction.customer}</td>
+                    <td class="py-3 px-4">
+                        <div class="text-gray-900 font-medium">${transaction.service}</div>
+                        <div class="text-xs text-gray-500">${transaction.quantity} unit</div>
+                    </td>
+                    <td class="py-3 px-4 text-gray-900 font-semibold">Rp ${transaction.total.toLocaleString('id-ID')}</td>
+                    <td class="py-3 px-4">
+                        <span class="px-2 py-1 ${statusClass} rounded-full text-xs font-medium">${transaction.status}</span>
+                    </td>
+                    <td class="py-3 px-4">
+                        <div class="flex space-x-2">
+                            <button onclick="viewTransaction(${transaction.id})" class="text-purple-600 hover:text-purple-800 font-medium text-sm px-2 py-1 rounded hover:bg-purple-50 transition-all duration-300" title="Lihat & Print">
+                                👁️
+                            </button>
+                            <button onclick="editTransaction(${transaction.id})" class="text-blue-600 hover:text-blue-800 font-medium text-sm px-2 py-1 rounded hover:bg-blue-50 transition-all duration-300" title="Edit">
+                                ✏️
+                            </button>
+                            <button onclick="deleteTransaction(${transaction.id})" class="text-red-600 hover:text-red-800 font-medium text-sm px-2 py-1 rounded hover:bg-red-50 transition-all duration-300" title="Hapus">
+                                🗑️
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function viewTransaction(id) {
+            const transaction = transactions.find(t => t.id === id);
+            if (!transaction) return;
+            
+            const detailText = `💰 DETAIL TRANSAKSI\n\n🔢 ${transaction.invoiceNumber}\n📅 ${transaction.date} ${transaction.time}\n👤 ${transaction.customer}\n\n🛍️ LAYANAN:\n${transaction.service} (${transaction.quantity} unit)\n${transaction.description ? `📝 ${transaction.description}` : ''}\n\n💰 TOTAL: Rp ${transaction.total.toLocaleString('id-ID')}\n📊 Status: ${transaction.status}`;
+            
+            if (confirm(`${detailText}\n\n🖨️ Apakah Anda ingin mencetak detail transaksi ini?`)) {
+                printTransaction(transaction);
+            } else {
+                alert(detailText);
+            }
+        }
+
+        function printTransaction(transaction) {
+            const printWindow = window.open('', '_blank');
+            const printContent = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Cetak Transaksi - ${transaction.invoiceNumber}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; }
+                        .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
+                        .detail { margin: 10px 0; }
+                        .total { font-size: 18px; font-weight: bold; margin-top: 20px; }
+                        @media print { body { margin: 0; } }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h2>FP DIGITAL PRINTING</h2>
+                        <p>Detail Transaksi Harian</p>
+                    </div>
+                    <div class="detail"><strong>ID Transaksi:</strong> ${transaction.invoiceNumber}</div>
+                    <div class="detail"><strong>Tanggal:</strong> ${transaction.date}</div>
+                    <div class="detail"><strong>Waktu:</strong> ${transaction.time}</div>
+                    <div class="detail"><strong>Pelanggan:</strong> ${transaction.customer}</div>
+                    <div class="detail"><strong>Layanan:</strong> ${transaction.service}</div>
+                    <div class="detail"><strong>Jumlah:</strong> ${transaction.quantity} unit</div>
+                    ${transaction.description ? `<div class="detail"><strong>Deskripsi:</strong> ${transaction.description}</div>` : ''}
+                    <div class="detail"><strong>Status:</strong> ${transaction.status}</div>
+                    <div class="total">TOTAL: Rp ${transaction.total.toLocaleString('id-ID')}</div>
+                    <div style="margin-top: 30px; text-align: center; font-size: 12px;">
+                        Dicetak pada: ${new Date().toLocaleString('id-ID')}
+                    </div>
+                </body>
+                </html>
+            `;
+            
+            printWindow.document.write(printContent);
+            printWindow.document.close();
+            printWindow.focus();
+            printWindow.print();
+        }
+
+        function editTransaction(id) {
+            const transaction = transactions.find(t => t.id === id);
+            if (!transaction) return;
+            
+            if (confirm(`🔄 EDIT TRANSAKSI\n\nID: ${transaction.invoiceNumber}\nPelanggan: ${transaction.customer}\nLayanan: ${transaction.service}\nTotal: Rp ${transaction.total.toLocaleString('id-ID')}\n\nApakah Anda ingin mengedit transaksi ini?`)) {
+                // Open edit modal with pre-filled data
+                openDailyTransactionModal();
+                
+                // Fill the form with existing data
+                document.getElementById('transaction-id').value = transaction.invoiceNumber;
+                document.getElementById('transaction-datetime').value = `${transaction.date}T${transaction.time}`;
+                document.getElementById('transaction-customer').value = transaction.customer;
+                document.getElementById('transaction-service').value = transaction.service;
+                document.getElementById('transaction-quantity').value = transaction.quantity;
+                document.getElementById('transaction-price').value = transaction.total / transaction.quantity;
+                document.getElementById('transaction-total').value = transaction.total;
+                document.getElementById('transaction-description').value = transaction.description;
+                
+                // Set payment status
+                const paymentStatus = transaction.status === 'Selesai' ? 'Lunas' : 'Belum Lunas';
+                document.querySelector(`input[name="payment-status"][value="${paymentStatus}"]`).checked = true;
+                
+                // Mark form as edit mode
+                document.getElementById('daily-transaction-form').setAttribute('data-edit-id', id);
+            }
+        }
+
+        function deleteTransaction(id) {
+            const transaction = transactions.find(t => t.id === id);
+            if (!transaction) return;
+            
+            if (confirm(`🗑️ HAPUS TRANSAKSI\n\nID: ${transaction.invoiceNumber}\nPelanggan: ${transaction.customer}\nLayanan: ${transaction.service}\nTotal: Rp ${transaction.total.toLocaleString('id-ID')}\n\n⚠️ PERINGATAN: Data yang dihapus tidak dapat dikembalikan!\n\nApakah Anda yakin ingin menghapus transaksi ini?`)) {
+                // Remove from transactions array
+                transactions = transactions.filter(t => t.id !== id);
+                
+                // Update customer transaction count
+                const customer = customers.find(c => c.name === transaction.customer);
+                if (customer && customer.totalTransactions > 0) {
+                    customer.totalTransactions--;
+                }
+                
+                // Refresh displays
+                updateDashboardStats();
+                updateDailyTransactionStats();
+                renderDailyTransactions();
+                
+                alert(`✅ Transaksi ${transaction.invoiceNumber} berhasil dihapus!`);
+            }
         }
 
         function filterDailyTransactions() {
-            alert('Fitur filter transaksi harian akan segera hadir!');
+            const selectedDate = document.getElementById('daily-date').value;
+            if (!selectedDate) {
+                alert('Silakan pilih tanggal terlebih dahulu');
+                return;
+            }
+            
+            renderDailyTransactions();
+            
+            // Update stats for selected date
+            const dayTransactions = transactions.filter(t => t.date === selectedDate);
+            const totalTransactions = dayTransactions.length;
+            const totalRevenue = dayTransactions.reduce((sum, t) => sum + t.total, 0);
+            const averageTransaction = totalTransactions > 0 ? totalRevenue / totalTransactions : 0;
+            
+            document.getElementById('daily-total-transactions').textContent = totalTransactions;
+            document.getElementById('daily-revenue').textContent = `Rp ${totalRevenue.toLocaleString('id-ID')}`;
+            document.getElementById('daily-average').textContent = `Rp ${Math.round(averageTransaction).toLocaleString('id-ID')}`;
+        }
+
+        function filterDailyTransactions() {
+            const selectedDate = document.getElementById('daily-date').value;
+            if (!selectedDate) {
+                alert('Silakan pilih tanggal terlebih dahulu');
+                return;
+            }
+            
+            renderDailyTransactions();
+            
+            // Update stats for selected date
+            const dayTransactions = transactions.filter(t => t.date === selectedDate);
+            const totalTransactions = dayTransactions.length;
+            const totalRevenue = dayTransactions.reduce((sum, t) => sum + t.total, 0);
+            const averageTransaction = totalTransactions > 0 ? totalRevenue / totalTransactions : 0;
+            
+            document.getElementById('daily-total-transactions').textContent = totalTransactions;
+            document.getElementById('daily-revenue').textContent = `Rp ${totalRevenue.toLocaleString('id-ID')}`;
+            document.getElementById('daily-average').textContent = `Rp ${Math.round(averageTransaction).toLocaleString('id-ID')}`;
+            
+            alert(`📊 Filter berhasil diterapkan!\n\nTanggal: ${selectedDate}\nTotal Transaksi: ${totalTransactions}\nPendapatan: Rp ${totalRevenue.toLocaleString('id-ID')}`);
         }
 
         function renderInvoices() {
@@ -2468,8 +4019,11 @@
                     </td>
                     <td class="py-4 px-4">
                         <div class="flex space-x-2">
-                            <button onclick="viewInvoice(${invoice.id})" class="text-purple-600 hover:text-purple-800 font-medium text-sm px-2 py-1 rounded hover:bg-purple-50 transition-all duration-300" title="Lihat">
+                            <button onclick="viewInvoice(${invoice.id})" class="text-purple-600 hover:text-purple-800 font-medium text-sm px-2 py-1 rounded hover:bg-purple-50 transition-all duration-300" title="Lihat & Print">
                                 👁️
+                            </button>
+                            <button onclick="editInvoice(${invoice.id})" class="text-blue-600 hover:text-blue-800 font-medium text-sm px-2 py-1 rounded hover:bg-blue-50 transition-all duration-300" title="Edit">
+                                ✏️
                             </button>
                             <button onclick="markInvoicePaid(${invoice.id})" class="text-green-600 hover:text-green-800 font-medium text-sm px-2 py-1 rounded hover:bg-green-50 transition-all duration-300" title="Tandai Lunas">
                                 💰
@@ -2502,7 +4056,130 @@
                 `• ${item.description} (${item.quantity} ${item.unit}) - Rp ${item.total.toLocaleString('id-ID')}`
             ).join('\n');
             
-            alert(`📄 DETAIL TAGIHAN\n\n🔢 ${invoice.invoiceNumber}\n📅 ${invoice.date}\n👤 ${invoice.customer}\n⏰ Jatuh Tempo: ${invoice.dueDate}\n\n📋 ITEM:\n${itemsText}\n\n💰 TOTAL:\n• Subtotal: Rp ${invoice.subtotal.toLocaleString('id-ID')}\n• PPN (11%): Rp ${invoice.tax.toLocaleString('id-ID')}\n• TOTAL: Rp ${invoice.total.toLocaleString('id-ID')}\n\n📊 Status: ${invoice.status}${invoice.notes ? `\n\n📝 Catatan: ${invoice.notes}` : ''}`);
+            const detailText = `📄 DETAIL TAGIHAN\n\n🔢 ${invoice.invoiceNumber}\n📅 ${invoice.date}\n👤 ${invoice.customer}\n⏰ Jatuh Tempo: ${invoice.dueDate}\n\n📋 ITEM:\n${itemsText}\n\n💰 TOTAL:\n• Subtotal: Rp ${invoice.subtotal.toLocaleString('id-ID')}\n• PPN (11%): Rp ${invoice.tax.toLocaleString('id-ID')}\n• TOTAL: Rp ${invoice.total.toLocaleString('id-ID')}\n\n📊 Status: ${invoice.status}${invoice.notes ? `\n\n📝 Catatan: ${invoice.notes}` : ''}`;
+            
+            if (confirm(`${detailText}\n\n🖨️ Apakah Anda ingin mencetak tagihan ini?`)) {
+                printInvoice(invoice);
+            } else {
+                alert(detailText);
+            }
+        }
+
+        function printInvoice(invoice) {
+            const printWindow = window.open('', '_blank');
+            const printContent = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Cetak Tagihan - ${invoice.invoiceNumber}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; }
+                        .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 20px; }
+                        .invoice-info { display: flex; justify-content: space-between; margin-bottom: 20px; }
+                        .detail { margin: 5px 0; }
+                        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        th { background-color: #f2f2f2; }
+                        .total-section { margin-top: 20px; text-align: right; }
+                        .total { font-size: 18px; font-weight: bold; }
+                        @media print { body { margin: 0; } }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h2>FP DIGITAL PRINTING</h2>
+                        <p>TAGIHAN / INVOICE</p>
+                    </div>
+                    
+                    <div class="invoice-info">
+                        <div>
+                            <div class="detail"><strong>No. Tagihan:</strong> ${invoice.invoiceNumber}</div>
+                            <div class="detail"><strong>Tanggal:</strong> ${invoice.date}</div>
+                            <div class="detail"><strong>Jatuh Tempo:</strong> ${invoice.dueDate}</div>
+                        </div>
+                        <div>
+                            <div class="detail"><strong>Kepada:</strong></div>
+                            <div class="detail">${invoice.customer}</div>
+                            <div class="detail"><strong>Status:</strong> ${invoice.status}</div>
+                        </div>
+                    </div>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Deskripsi</th>
+                                <th>Qty</th>
+                                <th>Satuan</th>
+                                <th>Harga</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${invoice.items.map(item => `
+                                <tr>
+                                    <td>${item.description}${item.detail ? `<br><small>${item.detail}</small>` : ''}</td>
+                                    <td>${item.quantity}</td>
+                                    <td>${item.unit}</td>
+                                    <td>Rp ${item.price.toLocaleString('id-ID')}</td>
+                                    <td>Rp ${item.total.toLocaleString('id-ID')}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                    
+                    <div class="total-section">
+                        <div class="detail">Subtotal: Rp ${invoice.subtotal.toLocaleString('id-ID')}</div>
+                        <div class="detail">PPN (11%): Rp ${invoice.tax.toLocaleString('id-ID')}</div>
+                        <div class="total">TOTAL: Rp ${invoice.total.toLocaleString('id-ID')}</div>
+                    </div>
+                    
+                    ${invoice.notes ? `<div style="margin-top: 20px;"><strong>Catatan:</strong><br>${invoice.notes}</div>` : ''}
+                    
+                    <div style="margin-top: 40px; text-align: center; font-size: 12px;">
+                        Dicetak pada: ${new Date().toLocaleString('id-ID')}
+                    </div>
+                </body>
+                </html>
+            `;
+            
+            printWindow.document.write(printContent);
+            printWindow.document.close();
+            printWindow.focus();
+            printWindow.print();
+        }
+
+        function editInvoice(id) {
+            const invoice = invoices.find(inv => inv.id === id);
+            if (!invoice) return;
+            
+            if (confirm(`🔄 EDIT TAGIHAN\n\nNo: ${invoice.invoiceNumber}\nPelanggan: ${invoice.customer}\nTotal: Rp ${invoice.total.toLocaleString('id-ID')}\nStatus: ${invoice.status}\n\nApakah Anda ingin mengedit tagihan ini?`)) {
+                // Open edit modal with pre-filled data
+                openInvoiceModal();
+                
+                // Fill the form with existing data
+                document.getElementById('invoice-number').value = invoice.invoiceNumber;
+                document.getElementById('invoice-date').value = invoice.date;
+                document.getElementById('invoice-due-date').value = invoice.dueDate;
+                document.getElementById('invoice-customer').value = invoice.customer;
+                document.getElementById('invoice-notes').value = invoice.notes || '';
+                
+                // Clear and populate items
+                document.getElementById('invoice-items-container').innerHTML = '';
+                invoice.items.forEach((item, index) => {
+                    addInvoiceItem();
+                    const itemDiv = document.querySelectorAll('.invoice-item')[index];
+                    itemDiv.querySelector('.item-description').value = item.description;
+                    itemDiv.querySelector('.item-detail').value = item.detail || '';
+                    itemDiv.querySelector('.item-quantity').value = item.quantity;
+                    itemDiv.querySelector('.item-price').value = item.price;
+                    itemDiv.querySelector('.item-total').value = item.total;
+                });
+                
+                calculateInvoiceTotal();
+                
+                // Mark form as edit mode
+                document.getElementById('invoice-form').setAttribute('data-edit-id', id);
+            }
         }
 
         function markInvoicePaid(id) {
@@ -2510,17 +4187,18 @@
             if (!invoice) return;
             
             if (invoice.status === 'Lunas') {
-                alert('Tagihan ini sudah lunas');
+                alert('💰 Tagihan ini sudah lunas!');
                 return;
             }
             
-            if (confirm(`Tandai tagihan ${invoice.invoiceNumber} sebagai LUNAS?\n\nTotal: Rp ${invoice.total.toLocaleString('id-ID')}`)) {
+            if (confirm(`💰 TANDAI LUNAS\n\nNo: ${invoice.invoiceNumber}\nPelanggan: ${invoice.customer}\nTotal: Rp ${invoice.total.toLocaleString('id-ID')}\n\nApakah Anda yakin tagihan ini sudah dibayar lunas?`)) {
                 invoice.status = 'Lunas';
+                
                 renderInvoices();
                 updateInvoiceStats();
                 updateDashboardStats();
                 
-                alert(`✅ Tagihan ${invoice.invoiceNumber} berhasil ditandai sebagai LUNAS!`);
+                alert(`✅ Tagihan ${invoice.invoiceNumber} berhasil ditandai sebagai LUNAS!\n\nPelanggan: ${invoice.customer}\nTotal: Rp ${invoice.total.toLocaleString('id-ID')}\nStatus: Lunas`);
             }
         }
 
@@ -2528,8 +4206,17 @@
             const invoice = invoices.find(inv => inv.id === id);
             if (!invoice) return;
             
-            if (confirm(`Apakah Anda yakin ingin menghapus tagihan ${invoice.invoiceNumber}?\n\nPelanggan: ${invoice.customer}\nTotal: Rp ${invoice.total.toLocaleString('id-ID')}\n\n⚠️ Tindakan ini tidak dapat dibatalkan!`)) {
-                invoices.splice(invoices.findIndex(inv => inv.id === id), 1);
+            if (confirm(`🗑️ HAPUS TAGIHAN\n\nNo: ${invoice.invoiceNumber}\nPelanggan: ${invoice.customer}\nTotal: Rp ${invoice.total.toLocaleString('id-ID')}\nStatus: ${invoice.status}\n\n⚠️ PERINGATAN: Data yang dihapus tidak dapat dikembalikan!\n\nApakah Anda yakin ingin menghapus tagihan ini?`)) {
+                // Remove from invoices array
+                invoices = invoices.filter(inv => inv.id !== id);
+                
+                // Update customer transaction count
+                const customer = customers.find(c => c.name === invoice.customer);
+                if (customer && customer.totalTransactions > 0) {
+                    customer.totalTransactions--;
+                }
+                
+                // Refresh displays
                 renderInvoices();
                 updateInvoiceStats();
                 updateDashboardStats();
@@ -2539,8 +4226,325 @@
         }
 
         function generateReport() {
-            alert('Fitur laporan akan segera hadir!');
+            const period = document.getElementById('report-period').value;
+            const type = document.getElementById('report-type').value;
+            
+            if (!period || !type) {
+                alert('Silakan pilih periode dan jenis laporan');
+                return;
+            }
+            
+            // Calculate date range based on period
+            const today = new Date();
+            let startDate, endDate = today;
+            
+            switch (period) {
+                case 'today':
+                    startDate = new Date(today);
+                    break;
+                case 'week':
+                    startDate = new Date(today);
+                    startDate.setDate(today.getDate() - 7);
+                    break;
+                case 'month':
+                    startDate = new Date(today);
+                    startDate.setMonth(today.getMonth() - 1);
+                    break;
+                case 'year':
+                    startDate = new Date(today);
+                    startDate.setFullYear(today.getFullYear() - 1);
+                    break;
+            }
+            
+            const startDateStr = startDate.toISOString().split('T')[0];
+            const endDateStr = endDate.toISOString().split('T')[0];
+            
+            // Filter data based on date range
+            const filteredTransactions = transactions.filter(t => t.date >= startDateStr && t.date <= endDateStr);
+            const filteredInvoices = invoices.filter(inv => inv.date >= startDateStr && inv.date <= endDateStr);
+            const filteredDeliveries = deliveries.filter(d => d.date >= startDateStr && d.date <= endDateStr);
+            
+            // Generate report based on type
+            let reportContent = '';
+            
+            switch (type) {
+                case 'financial':
+                    const totalIncome = filteredTransactions.reduce((sum, t) => sum + t.total, 0);
+                    const totalExpense = totalIncome * 0.3; // Estimated expenses
+                    const netProfit = totalIncome - totalExpense;
+                    const outstandingReceivables = filteredInvoices.filter(inv => inv.status === 'Belum Dibayar').reduce((sum, inv) => sum + inv.total, 0);
+                    
+                    document.getElementById('total-income').textContent = `Rp ${totalIncome.toLocaleString('id-ID')}`;
+                    document.getElementById('total-expense').textContent = `Rp ${totalExpense.toLocaleString('id-ID')}`;
+                    document.getElementById('net-profit').textContent = `Rp ${netProfit.toLocaleString('id-ID')}`;
+                    document.getElementById('outstanding-receivables').textContent = `Rp ${outstandingReceivables.toLocaleString('id-ID')}`;
+                    
+                    reportContent = `
+                        <div class="bg-white rounded-xl p-6 shadow-lg">
+                            <h5 class="text-lg font-bold text-gray-900 mb-4">📊 Laporan Keuangan - ${getPeriodText(period)}</h5>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="space-y-3">
+                                    <div class="flex justify-between p-3 bg-green-50 rounded-lg">
+                                        <span class="text-gray-700">Total Pemasukan:</span>
+                                        <span class="font-bold text-green-600">Rp ${totalIncome.toLocaleString('id-ID')}</span>
+                                    </div>
+                                    <div class="flex justify-between p-3 bg-red-50 rounded-lg">
+                                        <span class="text-gray-700">Estimasi Pengeluaran:</span>
+                                        <span class="font-bold text-red-600">Rp ${totalExpense.toLocaleString('id-ID')}</span>
+                                    </div>
+                                    <div class="flex justify-between p-3 bg-blue-50 rounded-lg">
+                                        <span class="text-gray-700">Keuntungan Bersih:</span>
+                                        <span class="font-bold text-blue-600">Rp ${netProfit.toLocaleString('id-ID')}</span>
+                                    </div>
+                                </div>
+                                <div class="space-y-3">
+                                    <div class="flex justify-between p-3 bg-purple-50 rounded-lg">
+                                        <span class="text-gray-700">Piutang Belum Lunas:</span>
+                                        <span class="font-bold text-purple-600">Rp ${outstandingReceivables.toLocaleString('id-ID')}</span>
+                                    </div>
+                                    <div class="flex justify-between p-3 bg-gray-50 rounded-lg">
+                                        <span class="text-gray-700">Total Transaksi:</span>
+                                        <span class="font-bold text-gray-600">${filteredTransactions.length}</span>
+                                    </div>
+                                    <div class="flex justify-between p-3 bg-yellow-50 rounded-lg">
+                                        <span class="text-gray-700">Margin Keuntungan:</span>
+                                        <span class="font-bold text-yellow-600">${totalIncome > 0 ? ((netProfit/totalIncome)*100).toFixed(1) : 0}%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'sales':
+                    const salesByService = {};
+                    filteredTransactions.forEach(t => {
+                        if (!salesByService[t.service]) {
+                            salesByService[t.service] = { count: 0, total: 0 };
+                        }
+                        salesByService[t.service].count += t.quantity;
+                        salesByService[t.service].total += t.total;
+                    });
+                    
+                    reportContent = `
+                        <div class="bg-white rounded-xl p-6 shadow-lg">
+                            <h5 class="text-lg font-bold text-gray-900 mb-4">📈 Laporan Penjualan - ${getPeriodText(period)}</h5>
+                            <div class="overflow-x-auto">
+                                <table class="w-full">
+                                    <thead>
+                                        <tr class="border-b border-gray-200">
+                                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Jenis Cetakan</th>
+                                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Jumlah Terjual</th>
+                                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Total Penjualan</th>
+                                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Rata-rata</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${Object.entries(salesByService).map(([service, data]) => `
+                                            <tr class="border-b border-gray-100">
+                                                <td class="py-3 px-4 text-gray-900 font-medium">${service}</td>
+                                                <td class="py-3 px-4 text-gray-600">${data.count}</td>
+                                                <td class="py-3 px-4 text-gray-900 font-semibold">Rp ${data.total.toLocaleString('id-ID')}</td>
+                                                <td class="py-3 px-4 text-gray-600">Rp ${Math.round(data.total/data.count).toLocaleString('id-ID')}</td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'customer':
+                    const customerStats = customers.map(customer => {
+                        const customerTransactions = filteredTransactions.filter(t => t.customer === customer.name);
+                        const totalSpent = customerTransactions.reduce((sum, t) => sum + t.total, 0);
+                        return { ...customer, periodTransactions: customerTransactions.length, periodSpent: totalSpent };
+                    }).sort((a, b) => b.periodSpent - a.periodSpent);
+                    
+                    reportContent = `
+                        <div class="bg-white rounded-xl p-6 shadow-lg">
+                            <h5 class="text-lg font-bold text-gray-900 mb-4">👥 Laporan Pelanggan - ${getPeriodText(period)}</h5>
+                            <div class="overflow-x-auto">
+                                <table class="w-full">
+                                    <thead>
+                                        <tr class="border-b border-gray-200">
+                                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Nama Pelanggan</th>
+                                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Transaksi Periode</th>
+                                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Total Belanja</th>
+                                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${customerStats.slice(0, 10).map(customer => {
+                                            const status = customer.totalTransactions > 5 ? 'VIP' : customer.totalTransactions > 2 ? 'Aktif' : 'Baru';
+                                            const statusClass = status === 'VIP' ? 'bg-purple-100 text-purple-800' : 
+                                                              status === 'Aktif' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800';
+                                            return `
+                                                <tr class="border-b border-gray-100">
+                                                    <td class="py-3 px-4 text-gray-900 font-medium">${customer.name}</td>
+                                                    <td class="py-3 px-4 text-gray-600">${customer.periodTransactions}</td>
+                                                    <td class="py-3 px-4 text-gray-900 font-semibold">Rp ${customer.periodSpent.toLocaleString('id-ID')}</td>
+                                                    <td class="py-3 px-4">
+                                                        <span class="px-2 py-1 ${statusClass} rounded-full text-xs font-medium">${status}</span>
+                                                    </td>
+                                                </tr>
+                                            `;
+                                        }).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'invoice':
+                    const paidInvoices = filteredInvoices.filter(inv => inv.status === 'Lunas');
+                    const unpaidInvoices = filteredInvoices.filter(inv => inv.status === 'Belum Dibayar');
+                    const totalInvoiceValue = filteredInvoices.reduce((sum, inv) => sum + inv.total, 0);
+                    const paidValue = paidInvoices.reduce((sum, inv) => sum + inv.total, 0);
+                    
+                    reportContent = `
+                        <div class="bg-white rounded-xl p-6 shadow-lg">
+                            <h5 class="text-lg font-bold text-gray-900 mb-4">🧾 Laporan Tagihan - ${getPeriodText(period)}</h5>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                <div class="space-y-3">
+                                    <div class="flex justify-between p-3 bg-green-50 rounded-lg">
+                                        <span class="text-gray-700">Tagihan Lunas:</span>
+                                        <span class="font-bold text-green-600">${paidInvoices.length}</span>
+                                    </div>
+                                    <div class="flex justify-between p-3 bg-red-50 rounded-lg">
+                                        <span class="text-gray-700">Tagihan Belum Lunas:</span>
+                                        <span class="font-bold text-red-600">${unpaidInvoices.length}</span>
+                                    </div>
+                                </div>
+                                <div class="space-y-3">
+                                    <div class="flex justify-between p-3 bg-blue-50 rounded-lg">
+                                        <span class="text-gray-700">Total Nilai Tagihan:</span>
+                                        <span class="font-bold text-blue-600">Rp ${totalInvoiceValue.toLocaleString('id-ID')}</span>
+                                    </div>
+                                    <div class="flex justify-between p-3 bg-green-50 rounded-lg">
+                                        <span class="text-gray-700">Nilai Terbayar:</span>
+                                        <span class="font-bold text-green-600">Rp ${paidValue.toLocaleString('id-ID')}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full">
+                                    <thead>
+                                        <tr class="border-b border-gray-200">
+                                            <th class="text-left py-3 px-4 font-semibold text-gray-700">No. Tagihan</th>
+                                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Pelanggan</th>
+                                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Nilai</th>
+                                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${filteredInvoices.map(invoice => {
+                                            const statusClass = invoice.status === 'Lunas' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
+                                            return `
+                                                <tr class="border-b border-gray-100">
+                                                    <td class="py-3 px-4 text-gray-900 font-mono">${invoice.invoiceNumber}</td>
+                                                    <td class="py-3 px-4 text-gray-900 font-medium">${invoice.customer}</td>
+                                                    <td class="py-3 px-4 text-gray-900 font-semibold">Rp ${invoice.total.toLocaleString('id-ID')}</td>
+                                                    <td class="py-3 px-4">
+                                                        <span class="px-2 py-1 ${statusClass} rounded-full text-xs font-medium">${invoice.status}</span>
+                                                    </td>
+                                                </tr>
+                                            `;
+                                        }).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'delivery':
+                    const deliveredCount = filteredDeliveries.filter(d => d.status === 'Terkirim').length;
+                    const inTransitCount = filteredDeliveries.filter(d => d.status === 'Dalam Perjalanan').length;
+                    const pendingCount = filteredDeliveries.filter(d => d.status === 'Menunggu Kirim').length;
+                    
+                    reportContent = `
+                        <div class="bg-white rounded-xl p-6 shadow-lg">
+                            <h5 class="text-lg font-bold text-gray-900 mb-4">🚚 Laporan Pengiriman - ${getPeriodText(period)}</h5>
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                                <div class="flex justify-between p-3 bg-green-50 rounded-lg">
+                                    <span class="text-gray-700">Terkirim:</span>
+                                    <span class="font-bold text-green-600">${deliveredCount}</span>
+                                </div>
+                                <div class="flex justify-between p-3 bg-blue-50 rounded-lg">
+                                    <span class="text-gray-700">Dalam Perjalanan:</span>
+                                    <span class="font-bold text-blue-600">${inTransitCount}</span>
+                                </div>
+                                <div class="flex justify-between p-3 bg-yellow-50 rounded-lg">
+                                    <span class="text-gray-700">Menunggu:</span>
+                                    <span class="font-bold text-yellow-600">${pendingCount}</span>
+                                </div>
+                                <div class="flex justify-between p-3 bg-purple-50 rounded-lg">
+                                    <span class="text-gray-700">Total:</span>
+                                    <span class="font-bold text-purple-600">${filteredDeliveries.length}</span>
+                                </div>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full">
+                                    <thead>
+                                        <tr class="border-b border-gray-200">
+                                            <th class="text-left py-3 px-4 font-semibold text-gray-700">No. Surat Jalan</th>
+                                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Pelanggan</th>
+                                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Tanggal</th>
+                                            <th class="text-left py-3 px-4 font-semibold text-gray-700">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${filteredDeliveries.map(delivery => {
+                                            const statusClass = delivery.status === 'Terkirim' ? 'bg-green-100 text-green-800' : 
+                                                              delivery.status === 'Dalam Perjalanan' ? 'bg-blue-100 text-blue-800' : 
+                                                              'bg-yellow-100 text-yellow-800';
+                                            return `
+                                                <tr class="border-b border-gray-100">
+                                                    <td class="py-3 px-4 text-gray-900 font-mono">${delivery.deliveryNumber}</td>
+                                                    <td class="py-3 px-4 text-gray-900 font-medium">${delivery.customer}</td>
+                                                    <td class="py-3 px-4 text-gray-600">${delivery.date}</td>
+                                                    <td class="py-3 px-4">
+                                                        <span class="px-2 py-1 ${statusClass} rounded-full text-xs font-medium">${delivery.status}</span>
+                                                    </td>
+                                                </tr>
+                                            `;
+                                        }).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `;
+                    break;
+            }
+            
+            document.getElementById('report-content').innerHTML = reportContent;
+            
+            alert(`✅ Laporan ${getReportTypeText(type)} berhasil dibuat!\n\nPeriode: ${getPeriodText(period)}\nData yang dianalisis:\n• Transaksi: ${filteredTransactions.length}\n• Tagihan: ${filteredInvoices.length}\n• Pengiriman: ${filteredDeliveries.length}`);
+        }
+        
+        function getPeriodText(period) {
+            const texts = {
+                'today': 'Hari Ini',
+                'week': '7 Hari Terakhir',
+                'month': '30 Hari Terakhir',
+                'year': '1 Tahun Terakhir'
+            };
+            return texts[period] || period;
+        }
+        
+        function getReportTypeText(type) {
+            const texts = {
+                'financial': 'Keuangan',
+                'sales': 'Penjualan',
+                'customer': 'Pelanggan',
+                'invoice': 'Tagihan',
+                'delivery': 'Pengiriman'
+            };
+            return texts[type] || type;
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97733e9060b2cec2',t:'MTc1NjU0NTk2My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'977384c5c4c8cec2',t:'MTc1NjU0ODgzOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
