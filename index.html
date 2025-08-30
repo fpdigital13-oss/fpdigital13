@@ -906,9 +906,9 @@
                                                 <div id="header-company-tagline" class="text-xs text-gray-600">Professional Printing Services</div>
                                             </div>
                                         </div>
-                                        <div id="header-company-address" class="text-xs text-gray-500 whitespace-pre-line">Jl. Merdeka No. 123, Jakarta Pusat 10110
-Telepon: (021) 1234-5678
-Email: info@fpdigitalprinting.com</div>
+                                        <div id="header-company-address" class="text-xs text-gray-500 whitespace-pre-line">Royal Sentraland BTP, Blok RD/15
+Telepon: 0877 8811 2438
+Email: fpdigital13@gmail.com</div>
                                     </div>
                                 </div>
                             </div>
@@ -1350,56 +1350,16 @@ Email: info@fpdigitalprinting.com</div>
         // Default data for first-time users
         const defaultData = {
             printPrices: {
-                'Banner/Spanduk': { 
-                    dailyPrice: 75000, 
-                    billingPrice: 75000, 
-                    unit: 'Per Meter' 
-                },
-                'Stiker': { 
-                    dailyPrice: 25000, 
-                    billingPrice: 25000, 
-                    unit: 'Per Meter' 
-                },
-                'Albatros': { 
-                    dailyPrice: 45000, 
-                    billingPrice: 45000, 
-                    unit: 'Per Meter' 
-                },
-                'Oneway': { 
-                    dailyPrice: 35000, 
-                    billingPrice: 35000, 
-                    unit: 'Per Meter' 
-                },
-                'Brosur A4 (HVS)': { 
-                    dailyPrice: 1500, 
-                    billingPrice: 1500, 
-                    unit: 'Per Pcs' 
-                },
-                'Brosur A4 (Ap120gr)': { 
-                    dailyPrice: 2500, 
-                    billingPrice: 2500, 
-                    unit: 'Per Pcs' 
-                },
-                'Poster A3': { 
-                    dailyPrice: 15000, 
-                    billingPrice: 15000, 
-                    unit: 'Per Lembar' 
-                },
-                'Stempel': { 
-                    dailyPrice: 50000, 
-                    billingPrice: 50000, 
-                    unit: 'Per Pcs' 
-                },
-                'Id Card': { 
-                    dailyPrice: 8000, 
-                    billingPrice: 8000, 
-                    unit: 'Per Pcs' 
-                },
-                'Kartu Nama': { 
-                    dailyPrice: 3000, 
-                    billingPrice: 3000, 
-                    unit: 'Per Pcs' 
-                }
+                'Banner/Spanduk': { unit: 'Per Meter', dailyPrice: 75000, billingPrice: 80000 },
+                'Stiker': { unit: 'Per Meter', dailyPrice: 25000, billingPrice: 30000 },
+                'Albatros': { unit: 'Per Meter', dailyPrice: 45000, billingPrice: 50000 },
+                'Oneway': { unit: 'Per Meter', dailyPrice: 35000, billingPrice: 40000 },
+                'Brosur A4 (HVS)': { unit: 'Per Lembar', dailyPrice: 500, billingPrice: 750 },
+                'Brosur A4 (Ap120gr)': { unit: 'Per Lembar', dailyPrice: 750, billingPrice: 1000 },
+                'Poster A3': { unit: 'Per Lembar', dailyPrice: 15000, billingPrice: 18000 },
+                'Stempel': { unit: 'Per Pcs', dailyPrice: 35000, billingPrice: 40000 },
+                'Id Card': { unit: 'Per Pcs', dailyPrice: 8000, billingPrice: 10000 },
+                'Kartu Nama': { unit: 'Per Pcs', dailyPrice: 500, billingPrice: 750 }
             },
             customers: [
                 {
@@ -1407,7 +1367,7 @@ Email: info@fpdigitalprinting.com</div>
                     name: 'Budi Santoso',
                     email: 'budi@email.com',
                     phone: '081234567890',
-                    address: 'Jl. Merdeka No. 123, Jakarta Pusat',
+                    address: 'Royal Sentraland BTP, Blok RD/15',
                     totalTransactions: 3
                 },
                 {
@@ -1415,7 +1375,7 @@ Email: info@fpdigitalprinting.com</div>
                     name: 'Siti Rahayu',
                     email: 'siti@email.com',
                     phone: '081234567891',
-                    address: 'Jl. Sudirman No. 456, Jakarta Selatan',
+                    address: 'Royal Sentraland BTP, Blok RC/20',
                     totalTransactions: 2
                 },
                 {
@@ -1423,7 +1383,7 @@ Email: info@fpdigitalprinting.com</div>
                     name: 'Ahmad Wijaya',
                     email: 'ahmad@email.com',
                     phone: '081234567892',
-                    address: 'Jl. Thamrin No. 789, Jakarta Pusat',
+                    address: 'Royal Sentraland BTP, Blok RA/10',
                     totalTransactions: 1
                 }
             ],
@@ -1461,7 +1421,7 @@ Email: info@fpdigitalprinting.com</div>
                     deliveryNumber: 'SJ-001',
                     date: '2024-01-15',
                     customer: 'Budi Santoso',
-                    address: 'Jl. Merdeka No. 123, Jakarta',
+                    address: 'Royal Sentraland BTP, Blok RD/15',
                     items: 'Banner 2x3m (2 pcs)',
                     status: 'Terkirim',
                     notes: 'Pengiriman sesuai jadwal',
@@ -1548,7 +1508,7 @@ Email: info@fpdigitalprinting.com</div>
                     return true;
                 } else {
                     // First time user - load default data
-                    printPrices = { ...defaultData.printPrices };
+                    printPrices = {...defaultData.printPrices};
                     customers = [...defaultData.customers];
                     transactions = [...defaultData.transactions];
                     deliveries = [...defaultData.deliveries];
@@ -1565,7 +1525,7 @@ Email: info@fpdigitalprinting.com</div>
             } catch (error) {
                 console.error('❌ Error memuat data:', error);
                 // Fallback to default data
-                printPrices = { ...defaultData.printPrices };
+                printPrices = {...defaultData.printPrices};
                 customers = [...defaultData.customers];
                 transactions = [...defaultData.transactions];
                 deliveries = [...defaultData.deliveries];
@@ -1676,7 +1636,7 @@ Email: info@fpdigitalprinting.com</div>
                         localStorage.removeItem('companySettings');
                         
                         // Reset to default data
-                        printPrices = { ...defaultData.printPrices };
+                        printPrices = {...defaultData.printPrices};
                         customers = [...defaultData.customers];
                         transactions = [...defaultData.transactions];
                         deliveries = [...defaultData.deliveries];
@@ -1689,8 +1649,8 @@ Email: info@fpdigitalprinting.com</div>
                         companySettings = {
                             name: 'FP DIGITAL PRINTING',
                             tagline: 'Professional Printing Services',
-                            address: 'Jl. Merdeka No. 123, Jakarta Pusat 10110\nTelepon: (021) 1234-5678\nEmail: info@fpdigitalprinting.com',
-                            logo: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiByeD0iMjAiIGZpbGw9InVybCgjZ3JhZGllbnQwX2xpbmVhcl8xXzEpIi8+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWRpZW50MF9saW5lYXJfMV8xIiB4MT0iMCIgeTE9IjAiIHgyPSIxMDAiIHkyPSIxMDAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iIzY2N0VFQSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM3NjRCQTIiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8dGV4dCB4PSI1MCIgeT0iNjAiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0MCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5GUDwvdGV4dD4KPC9zdmc+'
+                            address: 'Royal Sentraland BTP, Blok RD/15\nTelepon: (021) 1234-5678\nEmail: info@fpdigitalprinting.com',
+                            logo: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi0vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiByeD0iMjAiIGZpbGw9InVybCgjZ3JhZGllbnQwX2xpbmVhcl8xXzEpIi8+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWRpZW50MF9saW5lYXJfMV8xIiB4MT0iMCIgeTE9IjAiIHgyPSIxMDAiIHkyPSIxMDAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iIzY2N0VFQSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM3NjRCQTIiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8dGV4dCB4PSI1MCIgeT0iNjAiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0MCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5GUDwvdGV4dD4KPC9zdmc+'
                         };
                         
                         // Save default data
@@ -1724,7 +1684,7 @@ Email: info@fpdigitalprinting.com</div>
         let companySettings = {
             name: 'FP DIGITAL PRINTING',
             tagline: 'Professional Printing Services',
-            address: 'Jl. Merdeka No. 123, Jakarta Pusat 10110\nTelepon: (021) 1234-5678\nEmail: info@fpdigitalprinting.com',
+            address: 'Royal Sentraland BTP, Blok RD/15\nTelepon: 0877 8811 2438\nEmail: fpdigital13@gmail.com',
             logo: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiByeD0iMjAiIGZpbGw9InVybCgjZ3JhZGllbnQwX2xpbmVhcl8xXzEpIi8+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWRpZW50MF9saW5lYXJfMV8xIiB4MT0iMCIgeTE9IjAiIHgyPSIxMDAiIHkyPSIxMDAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iIzY2N0VFQSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM3NjRCQTIiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8dGV4dCB4PSI1MCIgeT0iNjAiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0MCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5GUDwvdGV4dD4KPC9zdmc+'
         };
 
@@ -2707,11 +2667,14 @@ Email: info@fpdigitalprinting.com</div>
             // Save to localStorage
             localStorage.setItem('companySettings', JSON.stringify(companySettings));
             
+            // Save all data including company settings
+            saveAllData();
+            
             updateCompanyPreview();
             updateSidebarLogo();
             updateLoginPageLogo();
             
-            alert(`✅ Pengaturan perusahaan berhasil disimpan!\n\n🏢 ${name}\n🎯 ${tagline}\n📍 ${address.split('\n')[0]}\n\nPerubahan akan diterapkan ke semua dokumen dan halaman login.`);
+            alert(`✅ Pengaturan perusahaan berhasil disimpan!\n\n🏢 ${name}\n🎯 ${tagline}\n📍 ${address.split('\n')[0]}\n\n💾 Logo dan semua pengaturan telah disimpan permanen.\nPerubahan akan diterapkan ke semua dokumen dan halaman login.`);
         }
 
         function resetCompanySettings() {
@@ -2719,7 +2682,7 @@ Email: info@fpdigitalprinting.com</div>
                 companySettings = {
                     name: 'FP DIGITAL PRINTING',
                     tagline: 'Professional Printing Services',
-                    address: 'Jl. Merdeka No. 123, Jakarta Pusat 10110\nTelepon: (021) 1234-5678\nEmail: info@fpdigitalprinting.com',
+                    address: 'Royal Sentraland BTP, Blok RD/15\nTelepon: 0877 8811 2438\nEmail: fpdigital13@gmail.com',
                     logo: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiByeD0iMjAiIGZpbGw9InVybCgjZ3JhZGllbnQwX2xpbmVhcl8xXzEpIi8+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWRpZW50MF9saW5lYXJfMV8xIiB4MT0iMCIgeTE9IjAiIHgyPSIxMDAiIHkyPSIxMDAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iIzY2N0VFQSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM3NjRCQTIiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8dGV4dCB4PSI1MCIgeT0iNjAiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0MCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5GUDwvdGV4dD4KPC9zdmc+'
                 };
                 
@@ -5202,5 +5165,5 @@ Email: info@fpdigitalprinting.com</div>
             return texts[type] || type;
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9773e8b89303cec2',t:'MTc1NjU1MjkzMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97741bef11bbcec2',t:'MTc1NjU1NTAzMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
