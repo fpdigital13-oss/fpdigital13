@@ -236,6 +236,7 @@
                 </form>
 
 
+
             </div>
 
             <!-- Footer -->
@@ -2525,42 +2526,7 @@ Email: fpdigital13@gmail.com</div>
             }
         }
 
-        function getUserRole(username) {
-            const userRoles = {
-                'admin': 'admin',
-                'user': 'user',
-                'demo': 'user'
-            };
-            return userRoles[username] || 'user';
-        }
 
-        function setupUserInterface(userRole) {
-            const adminOnlyTabs = ['laporan', 'pelanggan', 'harga', 'pengaturan'];
-            
-            if (userRole === 'user') {
-                // Hide admin-only tabs for regular users
-                adminOnlyTabs.forEach(tabName => {
-                    const tabButton = document.getElementById(`tab-${tabName}`);
-                    if (tabButton) {
-                        tabButton.style.display = 'none';
-                    }
-                });
-                
-                // Update welcome message for user role
-                const welcomeText = document.querySelector('header .text-right p:first-child');
-                if (welcomeText) {
-                    welcomeText.textContent = 'Selamat datang, User';
-                }
-            } else {
-                // Show all tabs for admin
-                adminOnlyTabs.forEach(tabName => {
-                    const tabButton = document.getElementById(`tab-${tabName}`);
-                    if (tabButton) {
-                        tabButton.style.display = 'flex';
-                    }
-                });
-            }
-        }
 
         // Company Settings Functions
         function loadCompanySettings() {
@@ -2739,182 +2705,58 @@ Email: fpdigital13@gmail.com</div>
         }
 
         function login(username, password) {
-            // Demo credentials with roles
-            const validCredentials = {
-                'admin': { password: 'admin123', role: 'admin' },
-                'user': { password: 'user123', role: 'user' },
-                'demo': { password: 'demo123', role: 'user' }
-            };
-
-            if (validCredentials[username] && validCredentials[username].password === password) {
-                const userRole = validCredentials[username].role;
-                
-                // Store login state
-                localStorage.setItem('isLoggedIn', 'true');
-                localStorage.setItem('currentUser', username);
-                localStorage.setItem('userRole', userRole);
-                
-                // Hide login page and show main app
-                document.getElementById('login-page').classList.add('hidden');
-                document.getElementById('main-app').classList.remove('hidden');
-                
-                // Setup interface based on user role
-                setupUserInterface(userRole);
-                
-                // Update welcome message
-                const welcomeText = document.getElementById('user-display-name');
-                if (welcomeText) {
-                    const roleText = userRole === 'admin' ? 'Admin' : 'User';
-                    welcomeText.textContent = `${roleText} - FP Digital`;
-                }
-                
-                // Initialize app based on role
-                updateDashboardStats();
-                if (userRole === 'admin') {
-                    renderCustomers();
-                    updateCustomerStats();
-                    renderPriceCards();
-                }
-                renderInvoices();
-                updateInvoiceStats();
-                updateDailyTransactionStats();
-                renderDailyTransactions();
-                renderDeliveries();
-                updateDeliveryStats();
-                
-                return true;
-            }
+            // This is a demo login - in real implementation, this would connect to a backend
+            alert('🔐 Demo Login System\n\nThis is a prototype interface. In a real implementation, this would connect to a secure authentication system.\n\nFor demo purposes, any username/password combination will work.');
             
-            return false;
+            // Hide login page and show main app for demo
+            document.getElementById('login-page').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
+            
+            // Initialize the app
+            updateDashboardStats();
+            renderCustomers();
+            updateCustomerStats();
+            renderPriceCards();
+            renderInvoices();
+            updateInvoiceStats();
+            updateDailyTransactionStats();
+            renderDailyTransactions();
+            renderDeliveries();
+            updateDeliveryStats();
+            
+            return true;
         }
 
         function logout() {
-            const currentUser = localStorage.getItem('currentUser') || 'User';
-            const userRole = localStorage.getItem('userRole') || 'user';
-            const roleText = userRole === 'admin' ? 'Administrator' : 'User';
-            
-            if (confirm(`🚪 KONFIRMASI LOGOUT\n\n👤 User: ${currentUser}\n🎭 Role: ${roleText}\n\n❓ Apakah Anda yakin ingin keluar dari sistem?\n\nSemua data akan disimpan dan Anda akan kembali ke halaman login.`)) {
-                // Save all current data before logout
-                saveAllData();
-                
-                // Only clear login-related data, keep business data
-                localStorage.removeItem('isLoggedIn');
-                localStorage.removeItem('currentUser');
-                localStorage.removeItem('userRole');
-                
+            if (confirm('Apakah Anda yakin ingin keluar dari sistem?')) {
                 // Show login page and hide main app
                 document.getElementById('main-app').classList.add('hidden');
                 document.getElementById('login-page').classList.remove('hidden');
                 
-                // Update login page logo
-                updateLoginPageLogo();
+                // Reset to dashboard tab
+                showTab('dashboard');
                 
-                // Reset all tabs to visible (for next login)
-                const allTabs = ['dashboard', 'transaksi-harian', 'tagihan', 'surat-jalan', 'laporan', 'pelanggan', 'harga'];
-                allTabs.forEach(tabName => {
-                    const tabButton = document.getElementById(`tab-${tabName}`);
-                    if (tabButton) {
-                        tabButton.style.display = 'flex';
-                        tabButton.classList.remove('active-tab');
-                    }
-                });
-                
-                // Reset to dashboard tab as active
-                document.getElementById('tab-dashboard').classList.add('active-tab');
-                
-                // Reset all content visibility
-                const contents = ['dashboard', 'transaksi-harian', 'tagihan', 'surat-jalan', 'laporan', 'pelanggan', 'harga', 'pengaturan'];
-                contents.forEach(content => {
-                    const contentEl = document.getElementById(`content-${content}`);
-                    if (contentEl) {
-                        contentEl.classList.add('hidden');
-                    }
-                });
-                document.getElementById('content-dashboard').classList.remove('hidden');
-                
-                // Reset header titles
-                document.getElementById('page-title').textContent = 'Dashboard';
-                document.getElementById('page-subtitle').textContent = 'Ringkasan aktivitas bisnis Anda';
-                
-                // Reset login form completely
-                const loginForm = document.getElementById('login-form');
-                if (loginForm) {
-                    loginForm.reset();
-                }
-                
-                // Reset user display name
-                document.getElementById('user-display-name').textContent = 'Admin FP Digital';
-                
-                // Close any open modals
-                const modals = ['customer-modal', 'invoice-modal', 'price-modal', 'daily-transaction-modal', 'quick-customer-modal', 'delivery-modal'];
-                modals.forEach(modalId => {
-                    const modal = document.getElementById(modalId);
-                    if (modal) {
-                        modal.classList.add('hidden');
-                        modal.classList.remove('flex');
-                    }
-                });
-                
-                // Show success message
-                alert(`✅ LOGOUT BERHASIL!\n\n👤 ${currentUser} (${roleText}) telah keluar dari sistem dengan aman.\n\n💾 Semua data telah disimpan otomatis.\n🔑 Silakan login kembali untuk mengakses sistem.\n\n📱 Terima kasih telah menggunakan FP Digital Printing!`);
+                alert('Anda telah keluar dari sistem. Terima kasih!');
             }
         }
 
-        function checkLoginState() {
-            const isLoggedIn = localStorage.getItem('isLoggedIn');
-            const currentUser = localStorage.getItem('currentUser');
-            const userRole = localStorage.getItem('userRole');
-            
-            if (isLoggedIn === 'true' && currentUser && userRole) {
-                // User is logged in, show main app
-                document.getElementById('login-page').classList.add('hidden');
-                document.getElementById('main-app').classList.remove('hidden');
-                
-                // Setup interface based on stored user role
-                setupUserInterface(userRole);
-                
-                // Update welcome message
-                const welcomeText = document.getElementById('user-display-name');
-                if (welcomeText) {
-                    const roleText = userRole === 'admin' ? 'Admin' : 'User';
-                    welcomeText.textContent = `${roleText} - FP Digital`;
-                }
-                
-                return true;
-            } else {
-                // User is not logged in, show login page
-                document.getElementById('login-page').classList.remove('hidden');
-                document.getElementById('main-app').classList.add('hidden');
-                return false;
-            }
-        }
+
 
         // Login form handler
         document.getElementById('login-form').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const username = document.getElementById('login-username').value.trim();
+            const username = document.getElementById('login-username').value;
             const password = document.getElementById('login-password').value;
             
             if (!username || !password) {
-                alert('❌ Silakan masukkan username dan password');
+                alert('Silakan masukkan username dan password');
                 return;
             }
             
-            if (login(username, password)) {
-                const userRole = localStorage.getItem('userRole');
-                const roleText = userRole === 'admin' ? 'Administrator' : 'User';
-                const accessText = userRole === 'admin' ? 'Akses penuh ke semua fitur sistem' : 'Akses ke Dashboard, Transaksi Harian, Tagihan, dan Surat Jalan';
-                
-                alert(`✅ Selamat datang, ${username}!\n\nRole: ${roleText}\n${accessText}\n\nAnda berhasil masuk ke sistem FP Digital Printing.`);
-            } else {
-                alert('❌ Username atau password salah!\n\nSilakan periksa kembali kredensial Anda.');
-                
-                // Clear password field
-                document.getElementById('login-password').value = '';
-                document.getElementById('login-password').focus();
-            }
+            login(username, password);
         });
+
 
         // Mobile Menu Functions
         function toggleMobileMenu() {
@@ -2987,27 +2829,19 @@ Email: fpdigital13@gmail.com</div>
                 companySettings = JSON.parse(savedSettings);
             }
             
-            // Check login state first
-            if (checkLoginState()) {
-                // User is logged in, initialize app based on role
-                const userRole = localStorage.getItem('userRole');
-                updateDashboardStats();
-                updateSidebarLogo();
-                if (userRole === 'admin') {
-                    renderCustomers();
-                    updateCustomerStats();
-                    renderPriceCards();
-                }
-                renderInvoices();
-                updateInvoiceStats();
-                updateDailyTransactionStats();
-                renderDailyTransactions();
-                renderDeliveries();
-                updateDeliveryStats();
-            } else {
-                // User is not logged in, update login page logo
-                updateLoginPageLogo();
-            }
+            // Initialize with login page
+            updateDashboardStats();
+            updateSidebarLogo();
+            renderCustomers();
+            updateCustomerStats();
+            renderPriceCards();
+            renderInvoices();
+            updateInvoiceStats();
+            updateDailyTransactionStats();
+            renderDailyTransactions();
+            renderDeliveries();
+            updateDeliveryStats();
+            updateLoginPageLogo();
         });
 
         // Invoice Management
@@ -5514,5 +5348,5 @@ Email: fpdigital13@gmail.com</div>
             return texts[type] || type;
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9782527af7f9cec2',t:'MTc1NjcwNDA2Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'978261464798cec2',t:'MTc1NjcwNDY3Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
