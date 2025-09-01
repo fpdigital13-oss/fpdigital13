@@ -1028,14 +1028,6 @@ Email: fpdigital13@gmail.com</div>
                         <div class="mt-6 pt-4 border-t border-gray-200">
                             <div class="flex justify-end">
                                 <div class="w-80 space-y-2">
-                                    <div class="flex justify-between text-sm">
-                                        <span class="text-gray-600">Subtotal:</span>
-                                        <span class="font-medium" id="invoice-subtotal">Rp 0</span>
-                                    </div>
-                                    <div class="flex justify-between text-sm">
-                                        <span class="text-gray-600">PPN (11%):</span>
-                                        <span class="font-medium" id="invoice-tax">Rp 0</span>
-                                    </div>
                                     <div class="flex justify-between text-lg font-semibold pt-2 border-t border-gray-200">
                                         <span>Total:</span>
                                         <span class="text-blue-600" id="invoice-total">Rp 0</span>
@@ -1444,9 +1436,7 @@ Email: fpdigital13@gmail.com</div>
                             total: 150000
                         }
                     ],
-                    subtotal: 150000,
-                    tax: 16500,
-                    total: 166500,
+                    total: 150000,
                     status: 'Belum Dibayar',
                     notes: 'Banner promosi untuk acara'
                 }
@@ -3147,18 +3137,13 @@ Email: fpdigital13@gmail.com</div>
 
         function calculateInvoiceTotal() {
             const itemTotals = document.querySelectorAll('.item-total');
-            let subtotal = 0;
+            let total = 0;
             
             itemTotals.forEach(input => {
-                subtotal += parseFloat(input.value) || 0;
+                total += parseFloat(input.value) || 0;
             });
             
-            const tax = subtotal * 0.11; // PPN 11%
-            const total = subtotal + tax;
-            
-            document.getElementById('invoice-subtotal').textContent = `Rp ${subtotal.toLocaleString('id-ID')}`;
-            document.getElementById('invoice-tax').textContent = `Rp ${Math.round(tax).toLocaleString('id-ID')}`;
-            document.getElementById('invoice-total').textContent = `Rp ${Math.round(total).toLocaleString('id-ID')}`;
+            document.getElementById('invoice-total').textContent = `Rp ${total.toLocaleString('id-ID')}`;
         }
 
         function createInvoice() {
@@ -3211,9 +3196,7 @@ Email: fpdigital13@gmail.com</div>
             }
             
             // Calculate totals
-            const subtotal = items.reduce((sum, item) => sum + item.total, 0);
-            const tax = subtotal * 0.11;
-            const total = subtotal + tax;
+            const total = items.reduce((sum, item) => sum + item.total, 0);
             
             if (editId) {
                 // Edit existing invoice
@@ -3225,9 +3208,7 @@ Email: fpdigital13@gmail.com</div>
                     invoice.dueDate = dueDate;
                     invoice.customer = customer;
                     invoice.items = items;
-                    invoice.subtotal = subtotal;
-                    invoice.tax = Math.round(tax);
-                    invoice.total = Math.round(total);
+                    invoice.total = total;
                     invoice.notes = notes;
                     
                     // Update customer transaction counts if customer changed
@@ -3243,7 +3224,7 @@ Email: fpdigital13@gmail.com</div>
                         }
                     }
                     
-                    alert(`✅ Tagihan berhasil diperbarui!\n\nNo. Tagihan: ${invoiceNumber}\nPelanggan: ${customer}\nTotal: Rp ${Math.round(total).toLocaleString('id-ID')}\nJatuh Tempo: ${dueDate}`);
+                    alert(`✅ Tagihan berhasil diperbarui!\n\nNo. Tagihan: ${invoiceNumber}\nPelanggan: ${customer}\nTotal: Rp ${total.toLocaleString('id-ID')}\nJatuh Tempo: ${dueDate}`);
                 }
                 
                 form.removeAttribute('data-edit-id');
@@ -3256,9 +3237,7 @@ Email: fpdigital13@gmail.com</div>
                     dueDate: dueDate,
                     customer: customer,
                     items: items,
-                    subtotal: subtotal,
-                    tax: Math.round(tax),
-                    total: Math.round(total),
+                    total: total,
                     status: 'Belum Dibayar',
                     notes: notes
                 };
@@ -3272,7 +3251,7 @@ Email: fpdigital13@gmail.com</div>
                     customerObj.totalTransactions++;
                 }
                 
-                alert(`✅ Tagihan berhasil dibuat!\n\nNo. Tagihan: ${invoiceNumber}\nPelanggan: ${customer}\nTotal: Rp ${Math.round(total).toLocaleString('id-ID')}\nJatuh Tempo: ${dueDate}`);
+                alert(`✅ Tagihan berhasil dibuat!\n\nNo. Tagihan: ${invoiceNumber}\nPelanggan: ${customer}\nTotal: Rp ${total.toLocaleString('id-ID')}\nJatuh Tempo: ${dueDate}`);
             }
             
             saveAllData(); // Auto-save
@@ -4615,7 +4594,6 @@ Email: fpdigital13@gmail.com</div>
                     </td>
                     <td class="py-4 px-4">
                         <div class="text-gray-900 font-semibold">Rp ${invoice.total.toLocaleString('id-ID')}</div>
-                        <div class="text-xs text-gray-500">+PPN 11%</div>
                     </td>
                     <td class="py-4 px-4">
                         <div class="text-gray-600">${invoice.dueDate}</div>
@@ -4663,7 +4641,7 @@ Email: fpdigital13@gmail.com</div>
                 `• ${item.description} (${item.quantity} ${item.unit}) - Rp ${item.total.toLocaleString('id-ID')}`
             ).join('\n');
             
-            const detailText = `📄 DETAIL TAGIHAN\n\n🔢 ${invoice.invoiceNumber}\n📅 ${invoice.date}\n👤 ${invoice.customer}\n⏰ Jatuh Tempo: ${invoice.dueDate}\n\n📋 ITEM:\n${itemsText}\n\n💰 TOTAL:\n• Subtotal: Rp ${invoice.subtotal.toLocaleString('id-ID')}\n• PPN (11%): Rp ${invoice.tax.toLocaleString('id-ID')}\n• TOTAL: Rp ${invoice.total.toLocaleString('id-ID')}\n\n📊 Status: ${invoice.status}${invoice.notes ? `\n\n📝 Catatan: ${invoice.notes}` : ''}`;
+            const detailText = `📄 DETAIL TAGIHAN\n\n🔢 ${invoice.invoiceNumber}\n📅 ${invoice.date}\n👤 ${invoice.customer}\n⏰ Jatuh Tempo: ${invoice.dueDate}\n\n📋 ITEM:\n${itemsText}\n\n💰 TOTAL: Rp ${invoice.total.toLocaleString('id-ID')}\n\n📊 Status: ${invoice.status}${invoice.notes ? `\n\n📝 Catatan: ${invoice.notes}` : ''}`;
             
             if (confirm(`${detailText}\n\n🖨️ Apakah Anda ingin mencetak tagihan ini?`)) {
                 printInvoice(invoice);
@@ -4747,8 +4725,6 @@ Email: fpdigital13@gmail.com</div>
                     </table>
                     
                     <div class="total-section">
-                        <div class="detail">Subtotal: Rp ${invoice.subtotal.toLocaleString('id-ID')}</div>
-                        <div class="detail">PPN (11%): Rp ${invoice.tax.toLocaleString('id-ID')}</div>
                         <div class="total">TOTAL: Rp ${invoice.total.toLocaleString('id-ID')}</div>
                     </div>
                     
@@ -5165,5 +5141,5 @@ Email: fpdigital13@gmail.com</div>
             return texts[type] || type;
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97741bef11bbcec2',t:'MTc1NjU1NTAzMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97823bb4d56bcec2',t:'MTc1NjcwMzEzMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
